@@ -1,7 +1,12 @@
 /// junk
 
-pub fn captcha(_: &[u8]) -> usize {
-  0
+pub fn captcha(i: &[u8]) -> usize {
+  let mut circle : Vec<u8> = i.iter().cloned().collect::<Vec<_>>();
+  circle.push(i[0]);
+  circle.as_slice().windows(2).
+    filter(|&c| c[0] == c[1]).
+    map(|c| c[0] as usize).
+    sum()
 }
 
 #[cfg(test)]

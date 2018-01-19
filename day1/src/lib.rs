@@ -1,4 +1,4 @@
-/// junk
+/// functions for day 1
 
 pub fn captcha(i: &[usize]) -> usize {
   let mut circle : Vec<usize> = i.iter().cloned().collect::<Vec<_>>();
@@ -21,10 +21,6 @@ pub fn part_two(i: &[usize]) -> usize {
     map(|c| c.1).
     sum();
   result * 2
-}
-
-fn get_index(start: usize, len: usize, offset: usize) -> usize {
-  (start + offset) % len
 }
 
 pub fn string_to_vec(i: &str) -> Vec<usize> {

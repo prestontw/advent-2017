@@ -1,3 +1,6 @@
+extern crate day3;
+
 fn main() {
-    println!("Hello, world!");
+    let input = 277678;
+    println!("{}", day3::distance(input));
 }

@@ -10,22 +10,25 @@ pub fn first_value_bigger(target: usize) -> usize {
     let first: HashMap<isize, usize> = [(0, 1)].into_iter().cloned().collect();
     grid.insert(0, first);
     let mut coord = (1, 0);
+    let mut direction = Direction::Right;
     loop {
         let to_insert = sum_around(&grid, coord);
+        println!("{}: {:?}", to_insert, coord);
         if to_insert > target {
             return to_insert
         }
         grid.entry(coord.0).or_insert(HashMap::new())
             .entry(coord.1).or_insert(to_insert);
-        coord = get_next_index(coord);
+        coord = get_next_index(coord, direction.clone());
     }
 }
 
-enum Time {
-    Two,
-    Five,
-    Eight,
-    Eleven,
+#[derive(Clone)]
+enum Direction {
+    Right,
+    Up,
+    Left,
+    Down
 }
 
 fn get_neighboring_indices(cur: (isize, isize)) -> Vec<(isize, isize)> {
@@ -47,73 +50,56 @@ fn sum_around(grid: &HashMap<isize, HashMap<isize, usize>>, coord: (isize, isize
                                       ).sum()
 } 
 
-fn produce_quadrant(x: isize, y: isize) -> Time {
-    use Time::*;
-    if x >= 0 {
-        if y >= 0 {
-            Two
+fn produce_quadrant(x: isize, y: isize, prev: Direction) -> Direction {
+    use Direction::*;
+    if x == y {
+        if x > 0 {
+            Left
         }
         else {
-            Five
+            Right
         }
     }
-    else {
-        if y >= 0 {
-            Eleven
+    else if -x == y {
+        if x < 0 {
+            Down
         }
         else {
-            Eight
+            Right
         }
+    }
+    else if x == -y + 1 && x > 0 && y <= 0 {
+        Up
+    }
+    else {
+        prev
     }
 }
 
-fn get_next_index(cur: (isize, isize)) -> (isize, isize) {
+fn get_next_index(cur: (isize, isize), prev: Direction) -> (isize, isize) {
     let (x, y) = cur;
-    if cur == (0, 0) {
-        (1, 0)
-    }
-    else {
-        match produce_quadrant(x, y) {
-            Time::Two => if x > y {
-                (x, y + 1)
-            }
-            else {
-                (x - 1, y)
-            },
-            Time::Eleven => if -x < y {
-                (x - 1, y)
-            }
-            else {
-                (x, y - 1)
-            },
-            Time::Eight => if y - 1 > x {
-                (x, y - 1)
-            }
-            else {
-                (x + 1, y)
-            },
-            Time::Five => if x <= -y {
-                (x + 1, y)
-            }
-            else {
-                (x, y + 1)
-            }
-        }
+    match produce_quadrant(cur.0, cur.1, prev) {
+        Direction::Down => (x, y - 1),
+        Direction::Left => (x - 1, y),
+        Direction::Right => (x + 1, y),
+        Direction::Up => (x, y + 1),
     }
 }
 #[test]
 fn test_next_index() {
-    assert_eq!(get_next_index((0, 0)), (1, 0));
-    assert_eq!(get_next_index((1, 0)), (1, 1));
-    assert_eq!(get_next_index((1, 1)), (0, 1));
-    assert_eq!(get_next_index((0, 1)), (-1, 1));
-    assert_eq!(get_next_index((-1, 1)), (-1, 0));
-    assert_eq!(get_next_index((-1, 0)), (-1, -1));
-    assert_eq!(get_next_index((-1, -1)), (0, -1));
-    assert_eq!(get_next_index((0, -1)), (1, -1));
-    assert_eq!(get_next_index((0, -1)), (1, -1));
-    assert_eq!(get_next_index((1, -1)), (2, -1));
-    assert_eq!(get_next_index((2, -1)), (2, 0));
+    use Direction::*;
+    assert_eq!(get_next_index((0, 0), Right), (1, 0));
+    assert_eq!(get_next_index((1, 0), Right), (1, 1));
+    assert_eq!(get_next_index((1, 1), Up), (0, 1));
+    assert_eq!(get_next_index((0, 1), Left), (-1, 1));
+    assert_eq!(get_next_index((-1, 1), Left), (-1, 0));
+    assert_eq!(get_next_index((-1, 0), Down), (-1, -1));
+    assert_eq!(get_next_index((-1, -1), Down), (0, -1));
+    assert_eq!(get_next_index((0, -1), Right), (1, -1));
+    assert_eq!(get_next_index((1, -1), Right), (2, -1));
+    assert_eq!(get_next_index((2, -1), Right), (2, 0));
+    assert_eq!(get_next_index((-2, -2), Down), (-1, -2));
+    assert_eq!(get_next_index((-2, -1), Down), (-2, -2));
 }
 
 pub fn distance(s: usize) -> usize {

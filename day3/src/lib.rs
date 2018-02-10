@@ -19,6 +19,7 @@ pub fn first_value_bigger(target: usize) -> usize {
         }
         grid.entry(coord.0).or_insert(HashMap::new())
             .entry(coord.1).or_insert(to_insert);
+        direction = produce_direction(coord.0, coord.1, direction.clone());
         coord = get_next_index(coord, direction.clone());
     }
 }
@@ -50,7 +51,7 @@ fn sum_around(grid: &HashMap<isize, HashMap<isize, usize>>, coord: (isize, isize
                                       ).sum()
 } 
 
-fn produce_quadrant(x: isize, y: isize, prev: Direction) -> Direction {
+fn produce_direction(x: isize, y: isize, prev: Direction) -> Direction {
     use Direction::*;
     if x == y {
         if x > 0 {
@@ -78,7 +79,7 @@ fn produce_quadrant(x: isize, y: isize, prev: Direction) -> Direction {
 
 fn get_next_index(cur: (isize, isize), prev: Direction) -> (isize, isize) {
     let (x, y) = cur;
-    match produce_quadrant(cur.0, cur.1, prev) {
+    match produce_direction(cur.0, cur.1, prev) {
         Direction::Down => (x, y - 1),
         Direction::Left => (x - 1, y),
         Direction::Right => (x + 1, y),

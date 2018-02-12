@@ -19,7 +19,7 @@ S: Into<String> + Eq + std::hash::Hash {
 }
 
 pub fn num_matching_lengths<'a, I>(i: I) -> usize where I: IntoIterator<Item = Vec<&'a str>> + Clone {
-    let temp = i.clone().into_iter().map(to_hashset);
+    let temp = i.clone().into_iter().map(to_hashset2);
     i.into_iter().zip(temp)
         .map(|(a, b)| a.len() == b.len())
         .map(|b| if b {1} else {0})

@@ -38,8 +38,12 @@ pub fn part_two<'a, I>(i: I) -> usize where I: IntoIterator<Item = Vec<&'a str>>
     let mut count = 0;
     for line in i {
         let temp = line.clone();
-        let sorted_word_vec = temp.into_iter().map(sort_str);
-        let hashed = to_hashset2(sorted_word_vec);
+        // let sorted_word_vec = temp.into_iter().map(sort_str);
+        // let hashed = to_hashset2(sorted_word_vec);
+        // or
+        let sorted_word_vec: Vec<String> = temp.into_iter().map(sort_str).collect();
+        let temp = sorted_word_vec.iter().map(|s| &**s);
+        let hashed = to_hashset(temp);
         if line.len() == hashed.len() { count += 1; }
     }
     count

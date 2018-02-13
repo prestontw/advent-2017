@@ -34,4 +34,8 @@ fn test_next_blocks() {
     assert_eq!(next_blocks(third.clone()), fourt);
     assert_eq!(next_blocks(fourt.clone()), fifth);
     assert_eq!(next_blocks(fifth.clone()), sixth);
+
+    let mut hs = HashSet::new();
+    hs.insert(first);
+    let new = next_blocks(first);
 }

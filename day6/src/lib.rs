@@ -1,6 +1,6 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
-fn num_to_repeat(start: Vec<usize>) -> usize {
+pub fn num_to_repeat(start: Vec<usize>) -> usize {
     let mut count = 1;
     let mut seen = HashSet::new();
     let mut next = next_blocks(&start[..]);
@@ -16,6 +16,26 @@ fn num_to_repeat(start: Vec<usize>) -> usize {
 #[test]
 fn test_num_to_repeat() {
     assert_eq!(num_to_repeat(vec![0, 2, 7, 0]), 5);
+}
+
+/// keep track of when we've seen things
+/// when encounter something in heap, subtract count and when that thing went in
+pub fn num_in_cycle(start: Vec<usize>) -> usize {
+    let mut count: usize = 1;
+    let mut seen = HashMap::new();
+    let mut next = next_blocks(&start[..]);
+    seen.insert(start, 0);
+    while !seen.contains_key(&next) {
+        seen.insert(next.clone(), count);
+        next = next_blocks(&next[..]);
+        count += 1;
+    }
+    // have to subtract 1 since already added 1 in while loop
+    count - seen.get(&next).unwrap()
+}
+#[test]
+fn test_num_in_cycle() {
+    assert_eq!(num_in_cycle(vec![0, 2, 7, 0]), 4);
 }
 
 fn already_seen_config(seen: &HashSet<Vec<usize>>, new: &Vec<usize>) -> bool {
@@ -111,4 +131,8 @@ fn get_largest_values_index(l: &[usize]) -> Option<(usize, usize)> {
 #[test]
 fn test_largest_index() {
     assert_eq!(get_largest_values_index(&[0, 3, 5, 2, 1]), Some((2, 5)));
+}
+
+pub fn line_to_vec(l: &str) -> Vec<usize> {
+    l.split_whitespace().map(|t| t.parse::<usize>().unwrap()).collect()
 }

@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
-fn already_seen_config(seen: &HashSet<Vec<isize>>, new: Vec<isize>) -> bool {
-    false
+fn already_seen_config(seen: &HashSet<Vec<isize>>, new: &Vec<isize>) -> bool {
+    seen.contains(new)
 }
 #[test]
 fn test_given_example() {
@@ -11,9 +11,9 @@ fn test_given_example() {
     hs.insert(vec![2, 4, 1, 2]);
     hs.insert(vec![3, 1, 2, 3]);
     hs.insert(vec![0, 2, 3, 4]);
-    assert!(!already_seen_config(&hs, vec![1, 3, 4, 1]));
+    assert!(!already_seen_config(&hs, &vec![1, 3, 4, 1]));
     hs.insert(vec![1, 3, 4, 1]);
-    assert!(already_seen_config(&hs, vec![2, 4, 1, 2]));
+    assert!(already_seen_config(&hs, &vec![2, 4, 1, 2]));
 }
 
 // if we take ownership over param, will that borrow out from hashset?
@@ -37,8 +37,21 @@ fn test_next_blocks() {
     assert_eq!(next_blocks(fifth), sixth);
 }
 
-fn amount_increase_per_index(distance: usize, length: usize, amount: usize) -> usize {
-    0
+fn amount_increase_per_index(distance_from: usize, length: usize, amount: usize) -> usize {
+    let base = amount / length;
+    let remainder = amount % length;
+    let even = remainder == 0;
+    if even || distance_from == 0{
+        base
+    }
+    else {
+        if distance_from <= remainder {
+            base + 1
+        }
+        else {
+            base
+        }
+    }
 }
 #[test]
 fn test_amount_increase() {
@@ -52,11 +65,14 @@ fn test_amount_increase() {
 }
 
 fn distances_from(length: usize, position: usize) -> Vec<usize> {
-    vec![]
+    let increase = length - position;
+    (0..length).map(|c| (c + increase) % length).collect()
 }
 #[test]
 fn test_distance_from() {
     assert_eq!(distances_from(5, 3), vec![2, 3, 4, 0, 1]);
+    assert_eq!(distances_from(4, 3), vec![1, 2, 3, 0]);
+    assert_eq!(distances_from(6, 0), vec![0, 1, 2, 3, 4, 5]);
 }
 
 fn get_largest_values_index(l: &[usize]) -> Option<(usize, usize)> {

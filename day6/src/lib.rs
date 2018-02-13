@@ -1,14 +1,24 @@
 use std::collections::HashSet;
 
-fn num_to_repeat<'a, I>(start: I) -> usize where I: IntoIterator<Item = &'a usize> {
-    0
+fn num_to_repeat(start: Vec<usize>) -> usize {
+    let mut count = 1;
+    let mut seen = HashSet::new();
+    let mut next = next_blocks(&start[..]);
+    seen.insert(start);
+    while !already_seen_config(&seen, &next) {
+        seen.insert(next.clone());
+        next = next_blocks(&next[..]);
+        count += 1;
+    }
+
+    count
 }
 #[test]
 fn test_num_to_repeat() {
-    assert_eq!(num_to_repeat(&vec![0, 2, 7, 0]), 5);
+    assert_eq!(num_to_repeat(vec![0, 2, 7, 0]), 5);
 }
 
-fn already_seen_config(seen: &HashSet<Vec<isize>>, new: &Vec<isize>) -> bool {
+fn already_seen_config(seen: &HashSet<Vec<usize>>, new: &Vec<usize>) -> bool {
     seen.contains(new)
 }
 #[test]
@@ -32,7 +42,7 @@ fn next_blocks(cur: &[usize]) -> Vec<usize> {
     ret[max_index] = 0;
     let distances = distances_from(ret.len(), max_index);
     for (index, distance) in distances.into_iter().enumerate() {
-        ret[index]
+        ret[index] += amount_increase_per_index(distance, ret.len(), max_value);
     }
     ret
 }

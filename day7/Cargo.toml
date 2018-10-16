@@ -1,0 +1,7 @@
+[package]
+name = "day7"
+version = "0.1.0"
+authors = ["Preston TW <preston_tunnell_wilson@brown.edu>"]
+
+[dependencies]
+nom = "^4.1"

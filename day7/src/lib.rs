@@ -19,11 +19,13 @@ pub fn balanced_weight(i: &str) -> usize {
   // TODO build tree from programs
   let tree: HashMap<String, Program> = HashMap::new();
 
-  fn children_weight(n: &Program) -> Result<usize, usize> {
+  fn children_weight(n: &str, tree: &HashMap<String, Program>) -> Result<usize, usize> {
+    let n = &tree[n];
     match n.children {
       None => Ok(n.weight),
-      Some(ref _children) => {
+      Some(ref children) => {
         // TODO check kids, if any are err, return that
+        let ws = children.iter().map(|s: &String| children_weight(s, tree));
         // if any is unequal, return that
         // else, add current weight to total and return
         Ok(n.weight)
@@ -32,7 +34,7 @@ pub fn balanced_weight(i: &str) -> usize {
   }
   // start at the bottom, check weights of children
   // if all children's children have balanced weight, check children themselves
-  let res = children_weight(&tree[&root]);
+  let res = children_weight(&root, &tree);
   match res {
     Ok(_) => panic!("not one program with bad weight"),
     Err(r) => r,

@@ -3,7 +3,7 @@
 extern crate nom;
 use nom::types::CompleteStr;
 use nom::{alpha, digit, space};
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 #[derive(PartialEq, Debug)]
 struct Program {
@@ -14,9 +14,29 @@ struct Program {
 
 // return an either?
 pub fn balanced_weight(i: &str) -> usize {
+  let root = bottom_program(i);
+  let programs = parse_lines(i);
+  // TODO build tree from programs
+  let tree: HashMap<String, Program> = HashMap::new();
+
+  fn children_weight(n: &Program) -> Result<usize, usize> {
+    match n.children {
+      None => Ok(n.weight),
+      Some(ref _children) => {
+        // TODO check kids, if any are err, return that
+        // if any is unequal, return that
+        // else, add current weight to total and return
+        Ok(n.weight)
+      }
+    }
+  }
   // start at the bottom, check weights of children
   // if all children's children have balanced weight, check children themselves
-  0
+  let res = children_weight(&tree[&root]);
+  match res {
+    Ok(_) => panic!("not one program with bad weight"),
+    Err(r) => r,
+  }
 }
 #[test]
 fn test_balanced_weight() {

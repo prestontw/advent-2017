@@ -12,6 +12,44 @@ struct Program {
   children: Option<Vec<String>>,
 }
 
+// return an either?
+pub fn balanced_weight(i: &str) -> usize {
+  // start at the bottom, check weights of children
+  // if all children's children have balanced weight, check children themselves
+  0
+}
+#[test]
+fn test_balanced_weight() {
+  let input = "pbga (66)
+xhth (57)
+ebii (61)
+havc (66)
+ktlj (57)
+fwft (72) -> ktlj, cntj, xhth
+qoyq (66)
+padx (45) -> pbga, havc, qoyq
+tknk (41) -> ugml, padx, fwft
+jptl (61)
+ugml (68) -> gyxo, ebii, jptl
+gyxo (61)
+cntj (57)";
+  assert_eq!(balanced_weight(input), 60_usize);
+
+  let simpleinput = "r (77) -> a b c
+a (6)
+b (6)
+c (7)";
+  assert_eq!(balanced_weight(simpleinput), 6);
+
+  let diffinput = "r (77) -> a b
+a (5) -> m n o
+b (7)
+m (1)
+n (1)
+o (1)";
+  assert_eq!(balanced_weight(diffinput), 4);
+}
+
 pub fn bottom_program(i: &str) -> String {
   let programs = parse_lines(i);
   let (parents, _kids) = programs.iter().fold(

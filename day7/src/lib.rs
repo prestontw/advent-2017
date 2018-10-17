@@ -41,12 +41,15 @@ b (6)
 c (7)";
   assert_eq!(balanced_weight(simpleinput), 6);
 
-  let diffinput = "r (77) -> a b
+  let diffinput = "r (77) -> a b c
 a (5) -> m n o
 b (7)
 m (1)
 n (1)
-o (1)";
+o (1)
+c (1) -> h g
+h (3)
+g (3)";
   assert_eq!(balanced_weight(diffinput), 4);
 }
 

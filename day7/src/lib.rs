@@ -3,12 +3,64 @@
 extern crate nom;
 use nom::types::CompleteStr;
 use nom::{alpha, digit, space};
+use std::collections::HashSet;
 
 #[derive(PartialEq, Debug)]
 struct Program {
   name: String,
   weight: usize,
   children: Option<Vec<String>>,
+}
+
+pub fn bottom_program(i: &str) -> String {
+  let programs = parse_lines(i);
+  let (parents, _kids) = programs.iter().fold(
+    (HashSet::<String>::new(), HashSet::<String>::new()),
+    |(parents, children), p: &Program| {
+      if let Some(ref c) = p.children {
+        // iterate over children and remove from parents
+        let mut new_parents = c.iter().fold(parents, |mut acc, kid| {
+          acc.remove(kid);
+          acc
+        });
+        // check to see if add p's name to parents
+        if !children.contains(&p.name) {
+          new_parents.insert(p.name.clone());
+        }
+        // and add children to children
+        let new_children = c.iter().fold(children, |mut acc, kid| {
+          acc.insert(kid.clone());
+          acc
+        });
+        (new_parents, new_children)
+      } else {
+        (parents, children)
+      }
+    },
+  );
+
+  if parents.len() == 1 {
+    parents.iter().nth(0).unwrap().to_string()
+  } else {
+    panic!("more than one bottom program!")
+  }
+}
+#[test]
+fn example_bottom_program() {
+  let input = "pbga (66)
+xhth (57)
+ebii (61)
+havc (66)
+ktlj (57)
+fwft (72) -> ktlj, cntj, xhth
+qoyq (66)
+padx (45) -> pbga, havc, qoyq
+tknk (41) -> ugml, padx, fwft
+jptl (61)
+ugml (68) -> gyxo, ebii, jptl
+gyxo (61)
+cntj (57)";
+  assert_eq!(bottom_program(input), "tknk");
 }
 
 named!(weight<CompleteStr, usize>, delimited!(char!('('), number, char!(')')));

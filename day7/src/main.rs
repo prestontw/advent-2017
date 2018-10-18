@@ -15,7 +15,7 @@ fn main() {
     let action = &args[1];
     match &action[..] {
         "part1" => println!("{}", day7::bottom_program(&input)),
-        "part2" => println!("not implemented"),
+        "part2" => println!("{}", day7::balanced_weight(&input)),
         _ => println!("not supported")
     }
 }

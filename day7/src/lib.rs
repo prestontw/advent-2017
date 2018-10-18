@@ -22,7 +22,7 @@ where
   })
 }
 
-fn total_weight_or_uneven_child(weights: &[usize]) -> Result<usize, usize> {
+fn total_weight_or_uneven_child(weights: &[usize], node_weights: &[usize]) -> Result<usize, usize> {
   let weight_counts = weights
     .iter()
     .fold(HashMap::new(), |mut acc: HashMap<usize, usize>, cur| {
@@ -33,6 +33,13 @@ fn total_weight_or_uneven_child(weights: &[usize]) -> Result<usize, usize> {
       acc
     });
   // check if have multiple ones
+  // TODO: really, check to make sure that length is only two
+  if weight_counts.len() > 2 {
+    panic!("why do we have more than two weights? {:?}", weight_counts);
+  }
+  // and return the difference between the two, or the difference
+  // between the weight of the children of the bad node
+  // and the weight the other subtrees have
   let singulars: Vec<usize> = weight_counts
     .iter()
     .filter(|(_k, &v)| v == 1)
@@ -40,7 +47,20 @@ fn total_weight_or_uneven_child(weights: &[usize]) -> Result<usize, usize> {
     .collect();
 
   if singulars.len() == 1 {
-    Err(singulars[0])
+    let target = singulars[0];
+    let other_weight = weight_counts
+      .iter()
+      .filter(|(&k, _v)| k != target)
+      .map(|(k, _v)| *k)
+      .nth(0)
+      .unwrap();
+    for (&weight, &node_weight) in weights.iter().zip(node_weights) {
+      if weight == target {
+        let diff = (other_weight as isize - target as isize) as isize;
+        return Err((node_weight as isize + diff) as usize);
+      }
+    }
+    panic!("should have found element by now");
   } else if singulars.len() > 1 {
     panic!(
       "ambiguous weights, could change more than one! {:?}",
@@ -66,8 +86,15 @@ pub fn balanced_weight(i: &str) -> usize {
       None => Ok(n.weight),
       Some(ref children) => {
         // TODO check kids, if any are err, return that
-        let ws = children.iter().map(|s: &String| children_weight(s, tree));
-        let uneven: Vec<Result<usize, usize>> = ws.filter(|r: &Result<_, _>| r.is_err()).collect();
+        let ws: Vec<Result<usize, usize>> = children
+          .iter()
+          .map(|s: &String| children_weight(s, tree))
+          .collect();
+        let uneven: Vec<Result<usize, usize>> = ws
+          .iter()
+          .filter(|r: &&Result<_, _>| r.is_err())
+          .cloned()
+          .collect();
         if uneven.len() == 1 {
           uneven[0]
         } else if uneven.len() >= 1 {
@@ -78,8 +105,11 @@ pub fn balanced_weight(i: &str) -> usize {
         } else {
           // if any weight is unequal of children, return that
           let children_weight: Vec<usize> = ws.iter().map(|s| s.unwrap()).collect();
+          let individual_child_weights: Vec<usize> =
+            children.iter().map(|c| tree[c].weight).collect();
           println!("{}: {:?}", n.name, children_weight);
-          let children_result = total_weight_or_uneven_child(&children_weight[..]);
+          let children_result =
+            total_weight_or_uneven_child(&children_weight[..], &individual_child_weights[..]);
           // else, add current weight to total and return
           match children_result {
             Ok(children_sum) => Ok(children_sum + n.weight),

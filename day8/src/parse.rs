@@ -4,7 +4,7 @@ use super::{
   Question,
 };
 use nom::types::CompleteStr;
-use nom::{alpha, be_i64, digit, le_i64, space};
+use nom::{alpha, digit, space};
 use std::str::FromStr;
 
 /* examples
@@ -14,7 +14,7 @@ c dec -10 if a >= 1
 c inc -20 if c == 10
 */
 
-named!(parse_line<CompleteStr, Instruction>,
+named!(pub parse_line<CompleteStr, Instruction>,
   do_parse!(
     r: alpha >>
     space >>
@@ -61,7 +61,7 @@ named!(operation<CompleteStr, CompleteStr>,
 named!(question<CompleteStr, CompleteStr>,
   alt!(
     tag!("<=") |
-    tag!("<=") |
+    tag!(">=") |
     tag!("<") |
     tag!(">") |
     tag!("==") |

@@ -13,7 +13,7 @@ fn main() {
     let instructions = day8::get_instructions(&input);
     let registers = day8::eval_instructions(&instructions);
     let biggest = day8::biggest_register(&registers);
-    println!("{}", biggest);
+    println!("{}", *biggest.unwrap());
     let biggest_ever = day8::biggest_register_ever(&instructions);
     println!("{}", biggest_ever);
 }

@@ -34,8 +34,38 @@ pub struct Instruction {
   cond: Condition,
 }
 
-pub fn biggest_register(h: &HashMap<String, isize>) -> isize {
-  *h.values().max().unwrap()
+pub fn biggest_register(h: &HashMap<String, isize>) -> Option<&isize> {
+  h.values().max().clone()
+}
+
+pub fn biggest_register_ever<'a, I>(is: I) -> isize
+where
+  I: IntoIterator<Item = &'a Instruction>,
+{
+  is.into_iter()
+    .fold(
+      (HashMap::new(), 0),
+      |(store, max): (HashMap<String, isize>, isize), cur| {
+        let new_store = eval_instruction(cur, store);
+        let new_potential = biggest_register(&new_store);
+        let new_max = new_potential.map(|nm| std::cmp::max(max, *nm)).unwrap_or(max);
+        let new_max = match new_potential {
+          Some(&new_max) => std::cmp::max(max, new_max),
+          None => max,
+        };
+        (new_store, new_max)
+      },
+    ).1
+}
+#[test]
+fn example_biggest_ever() {
+  let input = "b inc 5 if a > 1
+a inc 1 if b < 5
+c dec -10 if a >= 1
+c inc -20 if c == 10";
+  let instructions = get_instructions(input);
+  let be = biggest_register_ever(&instructions);
+  assert_eq!(be, 10);
 }
 
 pub fn get_instructions(s: &str) -> Vec<Instruction> {
@@ -61,7 +91,7 @@ c dec -10 if a >= 1
 c inc -20 if c == 10";
   let instructions = get_instructions(input);
   let registers = eval_instructions(&instructions);
-  assert_eq!(biggest_register(&registers), 1);
+  assert_eq!(*biggest_register(&registers).unwrap(), 1);
 }
 
 fn eval_instruction(i: &Instruction, store: HashMap<String, isize>) -> HashMap<String, isize> {

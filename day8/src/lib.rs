@@ -35,7 +35,7 @@ pub struct Instruction {
 }
 
 pub fn biggest_register(h: &HashMap<String, isize>) -> Option<&isize> {
-  h.values().max().clone()
+  h.values().max()
 }
 
 pub fn biggest_register_ever<'a, I>(is: I) -> isize
@@ -49,10 +49,6 @@ where
         let new_store = eval_instruction(cur, store);
         let new_potential = biggest_register(&new_store);
         let new_max = new_potential.map(|nm| std::cmp::max(max, *nm)).unwrap_or(max);
-        let new_max = match new_potential {
-          Some(&new_max) => std::cmp::max(max, new_max),
-          None => max,
-        };
         (new_store, new_max)
       },
     ).1

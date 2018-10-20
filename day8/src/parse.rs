@@ -1,6 +1,6 @@
 use super::{
   Condition, Instruction,
-  Operation::{self, *},
+  Operation,
   Question,
 };
 use nom::types::CompleteStr;
@@ -78,12 +78,12 @@ fn op_text_to_enum(s: &str) -> Operation {
 
 fn question_text_to_enum(s: &str) -> Question {
   match s {
-    ">" => Question::gt,
-    "<" => Question::lt,
-    ">=" => Question::ge,
-    "<=" => Question::le,
-    "==" => Question::eq,
-    "!=" => Question::ne,
+    ">" => Question::Gt,
+    "<" => Question::Lt,
+    ">=" => Question::Ge,
+    "<=" => Question::Le,
+    "==" => Question::Eq,
+    "!=" => Question::Ne,
     _ => panic!("unknown question in condition: {}", s),
   }
 }
@@ -93,11 +93,11 @@ fn question_text_to_enum(s: &str) -> Question {
 fn test_line() {
   let ideal = Instruction {
     register: "a".to_string(),
-    op: Increase,
+    op: Operation::Increase,
     amount: 10,
     cond: Condition {
       register: "b".to_string(),
-      q: Question::le,
+      q: Question::Le,
       amount: 1,
     },
   };

@@ -11,12 +11,12 @@ pub enum Operation {
 }
 #[derive(PartialEq, Debug)]
 pub enum Question {
-  gt,
-  lt,
-  eq,
-  ne,
-  ge,
-  le,
+  Gt,
+  Lt,
+  Eq,
+  Ne,
+  Ge,
+  Le,
 }
 
 #[derive(PartialEq, Debug)]
@@ -91,12 +91,12 @@ fn function_for_operation(op: &Operation) -> Box<Fn(isize, isize) -> isize> {
 
 fn function_for_question(q: &Question) -> Box<Fn(isize, isize) -> bool> {
   match q {
-    Question::gt => Box::new(|a, b| a > b),
-    Question::ge => Box::new(|a, b| a >= b),
-    Question::lt => Box::new(|a, b| a < b),
-    Question::le => Box::new(|a, b| a <= b),
-    Question::eq => Box::new(|a, b| a == b),
-    Question::ne => Box::new(|a, b| a != b),
+    Question::Gt => Box::new(|a, b| a > b),
+    Question::Ge => Box::new(|a, b| a >= b),
+    Question::Lt => Box::new(|a, b| a < b),
+    Question::Le => Box::new(|a, b| a <= b),
+    Question::Eq => Box::new(|a, b| a == b),
+    Question::Ne => Box::new(|a, b| a != b),
   }
 }
 // condition is true for this

@@ -3,10 +3,12 @@ extern crate nom;
 use std::collections::HashMap;
 mod parse;
 
+#[derive(PartialEq, Debug)]
 enum Operation {
   Increase,
   Decrease,
 }
+#[derive(PartialEq, Debug)]
 enum Question {
   gt,
   lt,
@@ -16,12 +18,14 @@ enum Question {
   le,
 }
 
+#[derive(PartialEq, Debug)]
 struct Condition {
   register: String,
   q: Question,
   amount: isize, // this can't be another register, can it?
 }
 
+#[derive(PartialEq, Debug)]
 struct Instruction {
   register: String,
   op: Operation,

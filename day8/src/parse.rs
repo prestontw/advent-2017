@@ -1,6 +1,10 @@
-use super::{Instruction, Question, Condition, Operation::{self, *}};
+use super::{
+  Condition, Instruction,
+  Operation::{self, *},
+  Question,
+};
 use nom::types::CompleteStr;
-use nom::{alpha, digit, space, be_i64, le_i64};
+use nom::{alpha, be_i64, digit, le_i64, space};
 use std::str::FromStr;
 
 /* examples
@@ -10,14 +14,59 @@ c dec -10 if a >= 1
 c inc -20 if c == 10
 */
 
-named!(parse_by<CompleteStr, isize>,
+named!(parse_line<CompleteStr, Instruction>,
+  do_parse!(
+    r: alpha >>
+    space >>
+    op: operation >>
+    space >>
+    by: parse_amount_by >>
+    tag!(" if ") >>
+    c_r: alpha >>
+    space >>
+    q: question >>
+    space >>
+    base: parse_amount_by >>
+    (Instruction {
+      register: r.to_string(),
+      op: op_text_to_enum(&op),
+      amount: by,
+      cond: Condition {
+        register: c_r.to_string(),
+        q: question_text_to_enum(&q),
+        amount: base,
+      }
+    })
+  )
+);
+named!(parse_amount_by<CompleteStr, isize>,
   map_res!(recognize!(pair!(opt!(tag!("-")), digit)),
     |cs: CompleteStr| isize::from_str(&cs)));
 #[test]
 fn test_numbers() {
-  assert_eq!(parse_by(CompleteStr("-10")), Ok((CompleteStr(""), -10)));
-  assert_eq!(parse_by(CompleteStr("10")), Ok((CompleteStr(""), 10)));
+  assert_eq!(
+    parse_amount_by(CompleteStr("-10")),
+    Ok((CompleteStr(""), -10))
+  );
+  assert_eq!(
+    parse_amount_by(CompleteStr("10")),
+    Ok((CompleteStr(""), 10))
+  );
 }
+
+named!(operation<CompleteStr, CompleteStr>,
+  alt!(tag!("dec") | tag!("inc"))
+);
+
+named!(question<CompleteStr, CompleteStr>,
+  alt!(
+    tag!("<=") |
+    tag!("<=") |
+    tag!("<") |
+    tag!(">") |
+    tag!("==") |
+    tag!("!=")
+    ));
 
 fn op_text_to_enum(s: &str) -> Operation {
   match s {
@@ -49,7 +98,11 @@ fn test_line() {
     cond: Condition {
       register: "b".to_string(),
       q: Question::le,
-      amount: 1
+      amount: 1,
     },
   };
+  assert_eq!(
+    Ok((CompleteStr(""), ideal)),
+    parse_line(CompleteStr("a inc 10 if b <= 1"))
+  );
 }

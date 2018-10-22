@@ -1,3 +1,63 @@
+pub enum Group {
+  Garbage,
+  Group { children: Vec<Group> },
+}
+
+pub fn score_group(g: &Group) -> usize {
+  0
+}
+#[test]
+fn test_scores() {
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    1
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    6
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    5
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    16
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    1
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    9
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    9
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: Vec::new()
+    }),
+    3
+  );
+}
+
 pub fn escape_bang_in_garbage(i: &str) -> String {
   yield_or_remove_char(i, 0, i.len(), "".to_string())
 }

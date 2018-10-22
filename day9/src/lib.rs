@@ -1,3 +1,8 @@
+#[macro_use]
+extern crate nom;
+mod parse;
+
+#[derive(Debug, PartialEq)]
 pub enum Group {
   Garbage,
   Group { children: Vec<Group> },
@@ -41,6 +46,21 @@ fn test_scores() {
         Group::Group {
           children: Vec::new()
         }
+      ]
+    }),
+    5
+  );
+  assert_eq!(
+    score_group(&Group::Group {
+      children: vec![
+        Group::Group {
+          children: Vec::new()
+        },
+        Group::Garbage,
+        Group::Group {
+          children: Vec::new()
+        },
+        Group::Garbage,
       ]
     }),
     5

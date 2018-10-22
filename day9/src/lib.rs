@@ -4,7 +4,15 @@ pub enum Group {
 }
 
 pub fn score_group(g: &Group) -> usize {
-  0
+  fn score(g: &Group, acc: usize) -> usize {
+    match g {
+      Group::Garbage => 0,
+      Group::Group { children } => {
+        children.iter().map(|c| score(c, acc + 1)).sum::<usize>() + acc + 1
+      }
+    }
+  }
+  score(g, 0)
 }
 #[test]
 fn test_scores() {
@@ -16,43 +24,82 @@ fn test_scores() {
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![Group::Group {
+        children: vec![Group::Group {
+          children: Vec::new()
+        }]
+      }]
     }),
     6
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![
+        Group::Group {
+          children: Vec::new()
+        },
+        Group::Group {
+          children: Vec::new()
+        }
+      ]
     }),
     5
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![Group::Group {
+        children: vec![
+          Group::Group {
+            children: Vec::new()
+          },
+          Group::Group {
+            children: Vec::new()
+          },
+          Group::Group {
+            children: vec![Group::Group {
+              children: Vec::new()
+            }]
+          }
+        ]
+      }]
     }),
     16
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![
+        Group::Garbage,
+        Group::Garbage,
+        Group::Garbage,
+        Group::Garbage
+      ]
     }),
     1
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![
+        Group::Group {
+          children: vec![Group::Garbage]
+        },
+        Group::Group {
+          children: vec![Group::Garbage]
+        },
+        Group::Group {
+          children: vec![Group::Garbage]
+        },
+        Group::Group {
+          children: vec![Group::Garbage]
+        },
+      ]
     }),
     9
   );
   assert_eq!(
     score_group(&Group::Group {
-      children: Vec::new()
-    }),
-    9
-  );
-  assert_eq!(
-    score_group(&Group::Group {
-      children: Vec::new()
+      children: vec![Group::Group {
+        children: vec![Group::Garbage]
+      }]
     }),
     3
   );

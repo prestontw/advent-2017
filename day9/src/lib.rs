@@ -9,6 +9,19 @@ pub enum Group {
   Group { children: Vec<Group> },
 }
 
+pub fn count_chars_in_garbage(g: &Group) -> usize {
+  match g {
+    Group::Garbage(s) => s.len(),
+    Group::Group{children} => children.iter().map(count_chars_in_garbage).sum()
+  }
+}
+#[test]
+fn test_counting() {
+  assert_eq!(count_chars_in_garbage(&Group::Group { children: vec![
+    Group::Garbage("123".to_string()),
+    Group::Garbage("12".to_string()),
+  ]}), 5);
+}
 pub fn score_group(g: &Group) -> usize {
   fn score(g: &Group, acc: usize) -> usize {
     match g {

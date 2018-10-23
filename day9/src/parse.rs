@@ -3,7 +3,7 @@ use nom::types::CompleteStr;
 
 named!(garbage<CompleteStr, Group>,
   do_parse!(
-    _body: delimited!(char!('<'), is_not!(">"), char!('>')) >>
+    _body: delimited!(char!('<'), opt!(is_not!(">")), char!('>')) >>
     (Group::Garbage)));
 #[test]
 fn test_garbage() {
@@ -24,11 +24,12 @@ fn test_garbage() {
  * since can alternate groups and garbage
  * Need to include commas in here too...
  */
-named!(group<CompleteStr, Group>,
+named!(pub group<CompleteStr, Group>,
   do_parse!(
-    children: delimited!(char!('{'),
-      separated_list!(tag!(","), alt!(garbage | group)),
-      char!('}')) >>
+    tag!("{") >>
+    children: 
+      separated_list!(tag!(","), alt!(group | garbage)) >>
+    tag!("}") >>
     (Group::Group { children: children })
   )
 );
@@ -44,15 +45,28 @@ fn test_parse_groups() {
     ))
   );
   assert_eq!(
-    group(CompleteStr("{{{}}}")),
+    group(CompleteStr("{{{<,},<>}}}")),
     Ok((
       CompleteStr(""),
       Group::Group {
         children: vec![Group::Group {
           children: vec![Group::Group {
-            children: Vec::new()
+            children: vec![Group::Garbage]
           }]
         }]
+      }
+    ))
+  );
+  assert_eq!(
+    group(CompleteStr("{{}}")),
+    Ok((
+      CompleteStr(""),
+      Group::Group {
+        children: vec![
+          Group::Group {
+            children: Vec::new()
+          }
+        ]
       }
     ))
   );
@@ -138,6 +152,21 @@ fn test_parse_groups() {
       Group::Group {
         children: vec![Group::Group {
           children: vec![Group::Garbage]
+        }]
+      }
+    ))
+  );
+  assert_eq!(
+    group(CompleteStr("{{{{<>}}}}")),
+    Ok((
+      CompleteStr(""),
+      Group::Group {
+        children: vec![Group::Group {
+          children: vec![Group::Group {
+            children: vec![Group::Group {
+              children: vec![Group::Garbage]
+            }]
+          }]
         }]
       }
     ))

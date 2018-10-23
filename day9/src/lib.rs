@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate nom;
-mod parse;
+pub mod parse;
+pub use self::parse::group;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Group {
   Garbage,
   Group { children: Vec<Group> },

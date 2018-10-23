@@ -5,14 +5,14 @@ pub use self::parse::group;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Group {
-  Garbage,
+  Garbage(String),
   Group { children: Vec<Group> },
 }
 
 pub fn score_group(g: &Group) -> usize {
   fn score(g: &Group, acc: usize) -> usize {
     match g {
-      Group::Garbage => 0,
+      Group::Garbage(_) => 0,
       Group::Group { children } => {
         children.iter().map(|c| score(c, acc + 1)).sum::<usize>() + acc + 1
       }
@@ -57,11 +57,11 @@ fn test_scores() {
         Group::Group {
           children: Vec::new()
         },
-        Group::Garbage,
+        Group::Garbage("".to_string()),
         Group::Group {
           children: Vec::new()
         },
-        Group::Garbage,
+        Group::Garbage("".to_string()),
       ]
     }),
     5
@@ -89,10 +89,10 @@ fn test_scores() {
   assert_eq!(
     score_group(&Group::Group {
       children: vec![
-        Group::Garbage,
-        Group::Garbage,
-        Group::Garbage,
-        Group::Garbage
+        Group::Garbage("".to_string()),
+        Group::Garbage("".to_string()),
+        Group::Garbage("".to_string()),
+        Group::Garbage("".to_string())
       ]
     }),
     1
@@ -101,16 +101,16 @@ fn test_scores() {
     score_group(&Group::Group {
       children: vec![
         Group::Group {
-          children: vec![Group::Garbage]
+          children: vec![Group::Garbage("".to_string())]
         },
         Group::Group {
-          children: vec![Group::Garbage]
+          children: vec![Group::Garbage("".to_string())]
         },
         Group::Group {
-          children: vec![Group::Garbage]
+          children: vec![Group::Garbage("".to_string())]
         },
         Group::Group {
-          children: vec![Group::Garbage]
+          children: vec![Group::Garbage("".to_string())]
         },
       ]
     }),
@@ -119,7 +119,7 @@ fn test_scores() {
   assert_eq!(
     score_group(&Group::Group {
       children: vec![Group::Group {
-        children: vec![Group::Garbage]
+        children: vec![Group::Garbage("".to_string())]
       }]
     }),
     3

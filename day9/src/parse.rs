@@ -3,13 +3,16 @@ use nom::types::CompleteStr;
 
 named!(garbage<CompleteStr, Group>,
   do_parse!(
-    _body: delimited!(char!('<'), opt!(is_not!(">")), char!('>')) >>
-    (Group::Garbage)));
+    body: delimited!(char!('<'), opt!(is_not!(">")), char!('>')) >>
+    (Group::Garbage(match body {
+      Some(cs) => cs.to_string(),
+      None => "".to_string()
+    }))));
 #[test]
 fn test_garbage() {
   assert_eq!(
     garbage(CompleteStr("<<<<>")),
-    Ok((CompleteStr(""), Group::Garbage))
+    Ok((CompleteStr(""), Group::Garbage("<<<".to_string())))
   );
 }
 
@@ -51,7 +54,7 @@ fn test_parse_groups() {
       Group::Group {
         children: vec![Group::Group {
           children: vec![Group::Group {
-            children: vec![Group::Garbage]
+            children: vec![Group::Garbage("".to_string())]
           }]
         }]
       }
@@ -115,10 +118,10 @@ fn test_parse_groups() {
       CompleteStr(""),
       Group::Group {
         children: vec![
-          Group::Garbage,
-          Group::Garbage,
-          Group::Garbage,
-          Group::Garbage
+          Group::Garbage("".to_string()),
+          Group::Garbage("".to_string()),
+          Group::Garbage("".to_string()),
+          Group::Garbage("".to_string())
         ]
       }
     ))
@@ -130,16 +133,16 @@ fn test_parse_groups() {
       Group::Group {
         children: vec![
           Group::Group {
-            children: vec![Group::Garbage]
+            children: vec![Group::Garbage("".to_string())]
           },
           Group::Group {
-            children: vec![Group::Garbage]
+            children: vec![Group::Garbage("".to_string())]
           },
           Group::Group {
-            children: vec![Group::Garbage]
+            children: vec![Group::Garbage("".to_string())]
           },
           Group::Group {
-            children: vec![Group::Garbage]
+            children: vec![Group::Garbage("".to_string())]
           },
         ]
       }
@@ -151,7 +154,7 @@ fn test_parse_groups() {
       CompleteStr(""),
       Group::Group {
         children: vec![Group::Group {
-          children: vec![Group::Garbage]
+          children: vec![Group::Garbage("".to_string())]
         }]
       }
     ))
@@ -164,7 +167,7 @@ fn test_parse_groups() {
         children: vec![Group::Group {
           children: vec![Group::Group {
             children: vec![Group::Group {
-              children: vec![Group::Garbage]
+              children: vec![Group::Garbage("".to_string())]
             }]
           }]
         }]

@@ -13,8 +13,9 @@ pub fn hash_list(n: usize, lengths: &[usize]) -> usize {
 
   fn inner<'a>(lst: &'a mut[usize], cur_pos: usize, step_size: usize, length: usize) -> (&'a mut [usize], usize, usize) {
     let len = lst.len();
+    let indices = wrap_indices(&start_plus_length_indices(cur_pos, length), len);
     // actually perform switching here, including getting indices
-    (lst, (cur_pos + step_size + length) % len, step_size + 1)
+    (reverse_values_at_indices(lst, &indices), (cur_pos + step_size + length) % len, step_size + 1)
   }
 
   lengths.iter().fold((&mut start[..], 0, 0), |acc, cur| {
@@ -33,7 +34,7 @@ pub fn initial_list(n: usize) -> Vec<usize> {
 }
 
 fn start_plus_length_indices(start: usize, length: usize) -> Vec<usize> {
-  (start..length).collect()
+  (start..(start + length)).collect()
 }
 fn wrap_indices(is: &[usize], list_length: usize) -> Vec<usize> {
   is.iter().map(|&c| c % list_length).collect()

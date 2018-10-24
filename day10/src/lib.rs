@@ -23,15 +23,15 @@ fn test_wrapping() {
 }
 
 fn reverse_values_at_indices(values: &[usize], indices: &[usize]) -> Vec<usize> {
-  // could just do this as last half and first half, then reverse
-  // instead of reversing, zipping, then halfing
+  // could produce different first halves and second halves based on parity of length of list
   let mut values: Vec<usize> = values.iter().cloned().collect();
+  let (first_half, _second) = indices.split_at(indices.len() / 2);
+  let (_first, second_half) = indices.split_at((indices.len() + 1) / 2);
+  let mut second_half = second_half.to_vec();
   // don't swap twice
-  let mut reversed: Vec<usize> = indices.iter().cloned().collect();
-  reversed.reverse();
-  let to_swap: Vec<(&usize, usize)> = indices.iter().zip(reversed).collect();
-  let (to_swap, _redundant) = to_swap.split_at(to_swap.len() / 2);
-  for &(&i_1, i_2) in to_swap {
+  second_half.reverse();
+  let to_swap = first_half.iter().zip(second_half);
+  for (&i_1, i_2) in to_swap {
     values.swap(i_1, i_2);
   }
   values

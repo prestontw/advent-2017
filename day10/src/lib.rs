@@ -74,9 +74,16 @@ fn start_plus_length_indices(start: usize, length: usize) -> Vec<usize> {
 }
 
 pub fn string_to_hash_string(i: &str) -> String {
-  let lengths = string_to_ascii_codes(i);
+  let mut lengths = string_to_ascii_codes(i);
+  append_usual(&mut lengths);
   // repeat lengths 64 times
-  let hash = hash_list(256, &lengths[..]);
+  let repeated: Vec<u8> = lengths
+    .iter()
+    .cloned()
+    .cycle()
+    .take(64 * lengths.len())
+    .collect();
+  let hash = hash_list(256, &repeated[..]);
   let dense_hash = sparse_hash_to_dense_hash(&hash[..]);
   let hash_strings = dense_hash.iter().map(number_to_hex);
   hash_strings.fold("".to_string(), |acc, cur| acc + &cur)

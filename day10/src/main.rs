@@ -5,4 +5,5 @@ fn main() {
     let lengths = day10::input_to_list(input);
     let lst = day10::hash_list(256, &lengths[..]);
     println!("{}", day10::get_hash_of_list(&lst));
+    println!("{}", day10::string_to_hash_string(input));
 }

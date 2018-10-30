@@ -5,3 +5,10 @@ authors = ["Preston Tunnell Wilson <preston_tunnell_wilson@brown.edu>"]
 edition = "2018"
 
 [dependencies]
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "my_benchmark"
+harness = false

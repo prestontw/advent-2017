@@ -34,12 +34,21 @@ pub fn get_hash_of_list(i: &[usize]) -> usize {
 pub fn hash_list(n: usize, lengths: &[usize]) -> Vec<usize> {
   let mut start = initial_list(n);
 
-// move this out so can repeat hashlist thingy multiple times? or just loop lengths over and over?
-  fn inner<'a>(lst: &'a mut[usize], cur_pos: usize, step_size: usize, length: usize) -> (&'a mut [usize], usize, usize) {
+  // move this out so can repeat hashlist thingy multiple times? or just loop lengths over and over?
+  fn inner<'a>(
+    lst: &'a mut [usize],
+    cur_pos: usize,
+    step_size: usize,
+    length: usize,
+  ) -> (&'a mut [usize], usize, usize) {
     let len = lst.len();
     let indices = wrap_indices(&start_plus_length_indices(cur_pos, length), len);
     // actually perform switching here, including getting indices
-    (reverse_values_at_indices(lst, &indices), (cur_pos + step_size + length) % len, step_size + 1)
+    (
+      reverse_values_at_indices(lst, &indices),
+      (cur_pos + step_size + length) % len,
+      step_size + 1,
+    )
   }
 
   lengths.iter().fold((&mut start[..], 0, 0), |acc, cur| {
@@ -74,7 +83,10 @@ fn xor_sparse_hash(i: &[u8]) -> u8 {
 }
 #[test]
 fn test_example_xor() {
-  assert_eq!(xor_sparse_hash(&vec![65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22]), 64);
+  assert_eq!(
+    xor_sparse_hash(&vec![65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22]),
+    64
+  );
 }
 
 fn number_to_hex(i: u8) -> String {
@@ -82,16 +94,15 @@ fn number_to_hex(i: u8) -> String {
   if result.len() == 1 {
     // then prepend a 0
     "0".to_owned() + &result
-  }
-  else {
+  } else {
     result
   }
 }
 #[test]
 fn test_numbers_to_hex() {
-    assert_eq!(number_to_hex(64), "40".to_string());
-    assert_eq!(number_to_hex(7), "07".to_string());
-    assert_eq!(number_to_hex(255), "ff".to_string());
+  assert_eq!(number_to_hex(64), "40".to_string());
+  assert_eq!(number_to_hex(7), "07".to_string());
+  assert_eq!(number_to_hex(255), "ff".to_string());
 }
 
 fn reverse_values_at_indices<'a>(values: &'a mut [usize], indices: &[usize]) -> &'a mut [usize] {
@@ -109,6 +120,12 @@ fn reverse_values_at_indices<'a>(values: &'a mut [usize], indices: &[usize]) -> 
 }
 #[test]
 fn test_reverse_values() {
-  assert_eq!(reverse_values_at_indices(&mut vec![10, 11, 12, 13, 14], &vec![0, 1, 2]), &[12, 11, 10, 13, 14]);
-  assert_eq!(reverse_values_at_indices(&mut vec![10, 11, 12, 13, 14], &vec![3, 4, 0, 1]), &[14, 13, 12, 11, 10]);
+  assert_eq!(
+    reverse_values_at_indices(&mut vec![10, 11, 12, 13, 14], &vec![0, 1, 2]),
+    &[12, 11, 10, 13, 14]
+  );
+  assert_eq!(
+    reverse_values_at_indices(&mut vec![10, 11, 12, 13, 14], &vec![3, 4, 0, 1]),
+    &[14, 13, 12, 11, 10]
+  );
 }

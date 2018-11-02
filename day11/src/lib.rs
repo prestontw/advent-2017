@@ -1,6 +1,6 @@
-use std::cmp::min;
+use std::cmp::max;
 
-enum Directions {
+enum Direction {
   North,
   Northeast,
   Southeast,
@@ -9,22 +9,45 @@ enum Directions {
   Northwest,
 }
 
+pub fn fewest_number_steps(i: &str) -> usize {
+  let positions: Vec<Direction> = i.split(",").map(string_to_direction).collect();
+  hex_distance(position(&positions))
+}
+#[test]
+fn test_example_steps() {
+    assert_eq!(fewest_number_steps("ne,ne,ne"), 3);
+    assert_eq!(fewest_number_steps("ne,ne,sw,sw"), 0);
+    assert_eq!(fewest_number_steps("ne,ne,s,s"), 2);
+    assert_eq!(fewest_number_steps("se,sw,se,sw,sw"), 3);
+}
+
 #[derive(Debug, PartialEq)]
 struct Position {
   SN: isize,
-  EW: isize,
+  WE: isize,
+}
+
+fn string_to_direction(i: &str) -> Direction {
+  use self::Direction::*;
+  match i {
+    "ne" => Northeast,
+    "n" => North,
+    "nw" => Northwest,
+    "s" => South,
+    "se" => Southeast,
+    "sw" => Southwest,
+    _ => panic!("Weird input: {}", i),
+  }
 }
 
 // really, this should take in a position rather than a stream
 fn hex_distance(p: Position) -> usize {
-  let abs_sn = p.SN.abs();
-  let abs_ew = p.EW.abs();
-  let diagonal = min(abs_ew, abs_sn);
-  (diagonal + (abs_ew - diagonal) + (abs_sn - diagonal)) as usize
+  let z_diff = p.SN + p.WE;
+  max(p.SN.abs(), max(p.WE.abs(), z_diff.abs())) as usize
 }
 #[test]
 fn test_hex_distance() {
-  use self::Directions::*;
+  use self::Direction::*;
   assert_eq!(
     hex_distance(position(&vec![Northeast, Northeast, Northeast])),
     3
@@ -52,20 +75,23 @@ fn test_hex_distance() {
 
 fn position<'a, I>(ds: I) -> Position
 where
-  I: IntoIterator<Item = &'a Directions>,
+  I: IntoIterator<Item = &'a Direction>,
 {
-  ds.into_iter().fold(Position { SN: 0, EW: 0 }, |acc, cur| {
+  ds.into_iter().fold(Position { SN: 0, WE: 0 }, |acc, cur| {
     update_position(acc, cur)
   })
 }
 #[test]
 fn test_positions() {
-  use self::Directions::*;
-  assert_eq!(position(&vec![Southeast, Southwest, Southeast, Southwest, Southwest]), Position { SN: 3, EW: 1});
+  use self::Direction::*;
+  assert_eq!(
+    position(&vec![Southeast, Southwest, Southeast, Southwest, Southwest]),
+    Position { SN: -2, WE: -1 }
+  );
 }
 
-fn update_position(mut p: Position, d: &Directions) -> Position {
-  use self::Directions::*;
+fn update_position(mut p: Position, d: &Direction) -> Position {
+  use self::Direction::*;
   match d {
     North => {
       p.SN += 1;
@@ -76,22 +102,20 @@ fn update_position(mut p: Position, d: &Directions) -> Position {
       p
     }
     Northeast => {
-      p.EW -= 1;
-      p.SN += 1;
+      p.WE += 1;
       p
     }
     Northwest => {
-      p.EW += 1;
+      p.WE -= 1;
       p.SN += 1;
       p
     }
     Southwest => {
-      p.EW += 1;
-      p.SN -= 1;
+      p.WE -= 1;
       p
     }
     Southeast => {
-      p.EW -= 1;
+      p.WE += 1;
       p.SN -= 1;
       p
     }

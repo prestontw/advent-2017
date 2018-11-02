@@ -11,4 +11,5 @@ fn main() {
         buffer
     };
     println!("{}", day11::fewest_number_steps(&input));
+    println!("{}", day11::max_distance_for_directions(&input));
 }

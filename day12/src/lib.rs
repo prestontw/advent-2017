@@ -56,11 +56,7 @@ fn encompassing_group(e: usize, adj_map: &HashMap<usize, Vec<usize>>) -> HashSet
       seen
     }
   }
-  add_adj_elements(
-    adj_map,
-    HashSet::with_capacity(adj_map.len() / 2),
-    vec![e],
-  )
+  add_adj_elements(adj_map, HashSet::with_capacity(adj_map.len() / 2), vec![e])
 }
 
 pub fn part1(i: &str) -> usize {
@@ -89,3 +85,21 @@ fn test_part1() {
 
 // part2: total number of groups
 // list of every number, remove them as we see them in a group?
+pub fn num_groups(i: &str) -> usize {
+  0
+}
+#[test]
+fn test_part2() {
+  assert_eq!(
+    num_groups(
+      "0 <-> 2
+1 <-> 1
+2 <-> 0, 3, 4
+3 <-> 2, 4
+4 <-> 2, 3, 6
+5 <-> 6
+6 <-> 4, 5"
+    ),
+    2
+  );
+}

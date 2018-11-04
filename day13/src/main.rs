@@ -11,4 +11,5 @@ fn main() {
         buffer
     };
     println!("{}", day13::part1(&input));
+    println!("{}", day13::part2(&input));
 }

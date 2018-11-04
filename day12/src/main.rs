@@ -11,4 +11,5 @@ fn main() {
         buffer
     };
     println!("{}", day12::part1(&input));
+    println!("{}", day12::num_groups(&input));
 }

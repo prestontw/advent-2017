@@ -1,3 +1,4 @@
+#![feature(vec_remove_item)]
 #[macro_use]
 extern crate nom;
 use nom::types::CompleteStr;
@@ -86,7 +87,22 @@ fn test_part1() {
 // part2: total number of groups
 // list of every number, remove them as we see them in a group?
 pub fn num_groups(i: &str) -> usize {
-  0
+  let adj_map = i
+    .lines()
+    .map(|s| parse_line(CompleteStr(s)).unwrap().1)
+    .collect::<HashMap<usize, Vec<usize>>>();
+  let mut keys: Vec<usize> = adj_map.keys().cloned().collect();
+  let mut count = 0;
+  while keys.len() > 0 {
+    let curElement = keys.pop();
+    let curGroup = encompassing_group(curElement.unwrap(), &adj_map);
+    // remove all elements of curGroup from keys
+    for elem in curGroup {
+      keys.remove_item(&elem);
+    }
+    count += 1;
+  }
+  count
 }
 #[test]
 fn test_part2() {

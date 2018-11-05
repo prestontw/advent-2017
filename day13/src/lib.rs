@@ -28,11 +28,13 @@ fn testIntersections() {
 
 fn wait(ranges: &HashMap<isize, isize>) -> usize {
   let mut ret = 0;
+  let mut ranges: Vec<(&isize, &isize)> = ranges.iter().collect();
+  ranges.sort_unstable_by_key(|(_k, v)| *v);
   loop {
     // maybe move this out of loop?-> don't, slows performance
     let mut caught = false;
     // maybe sort these ranges for depth
-    for (&pos, &depth) in ranges {
+    for (&pos, &depth) in &ranges {
       if (pos + ret) % depth == 0 {
         caught = true;
         break;
@@ -42,7 +44,6 @@ fn wait(ranges: &HashMap<isize, isize>) -> usize {
       return ret as usize;
     }
     ret += 1;
-    caught = false;
   }
 }
 #[test]

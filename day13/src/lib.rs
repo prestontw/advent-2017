@@ -14,7 +14,11 @@ named!(parseLine<CompleteStr, (isize, isize)>,
 );
 
 fn intersections(ranges: &HashMap<isize, isize>) -> HashSet<isize> {
-  ranges.iter().filter(|&(k, v)| k % v == 0).map(|(k, _v)| *k).collect()
+  ranges
+    .iter()
+    .filter(|&(k, v)| k % v == 0)
+    .map(|(k, _v)| *k)
+    .collect()
 }
 #[test]
 fn testIntersections() {
@@ -25,17 +29,20 @@ fn testIntersections() {
 fn wait(ranges: &HashMap<isize, isize>) -> usize {
   let mut ret = 0;
   loop {
+    // maybe move this out of loop?-> don't, slows performance
     let mut caught = false;
+    // maybe sort these ranges for depth
     for (&pos, &depth) in ranges {
       if (pos + ret) % depth == 0 {
         caught = true;
-        break
+        break;
       }
     }
     if caught == false {
-      return ret as usize
+      return ret as usize;
     }
     ret += 1;
+    caught = false;
   }
 }
 #[test]
@@ -51,7 +58,9 @@ pub fn part1(i: &str) -> isize {
     .collect();
 
   let inters = intersections(&ranges);
-  inters.iter().fold(0, |acc, cur| acc + (ranges[cur] / 2 + 1) * cur)
+  inters
+    .iter()
+    .fold(0, |acc, cur| acc + (ranges[cur] / 2 + 1) * cur)
 }
 #[test]
 fn testPart1() {

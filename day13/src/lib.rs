@@ -1,17 +1,21 @@
 #![allow(non_snake_case)]
 #[macro_use]
 extern crate nom;
-use nom::digit;
 use nom::types::CompleteStr;
+use self::parse::parseLine;
 use std::collections::{HashMap, HashSet};
 
-named!(parseLine<CompleteStr, (isize, isize)>,
+mod parse {
+  use nom::digit;
+  use nom::types::CompleteStr;
+  named!(pub parseLine<CompleteStr, (isize, isize)>,
   do_parse!(
     start: digit >>
     tag!(": ") >>
     stop: digit >>
     ((start.parse::<isize>().unwrap(), (stop.parse::<isize>().unwrap() - 1) * 2)))
 );
+}
 
 fn intersections(ranges: &HashMap<isize, isize>) -> HashSet<isize> {
   ranges

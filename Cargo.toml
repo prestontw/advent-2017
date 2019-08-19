@@ -11,5 +11,9 @@ nom = "^4.1"
 criterion = "0.2"
 
 [[bench]]
-name = "my_benchmark"
+name = "day10"
+harness = false
+
+[[bench]]
+name = "day12"
 harness = false

@@ -6,10 +6,10 @@ use advent_2017::day13;
 use criterion::Criterion;
 
 fn criterion_benchmark(c: &mut Criterion) {
-  c.bench_function("part 2", |b| {
-    b.iter(|| {
-      day13::part2(
-        "0: 4
+    c.bench_function("part 2", |b| {
+        b.iter(|| {
+            day13::part2(
+                "0: 4
 1: 2
 2: 3
 4: 4
@@ -52,9 +52,9 @@ fn criterion_benchmark(c: &mut Criterion) {
 82: 14
 88: 18
 92: 17",
-      )
-    })
-  });
+            )
+        })
+    });
 }
 
 criterion_group!(benches, criterion_benchmark);

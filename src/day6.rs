@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
 pub fn num_to_repeat(start: Vec<usize>) -> usize {
     let mut count = 1;
@@ -86,14 +86,12 @@ fn amount_increase_per_index(distance_from: usize, length: usize, amount: usize)
     let base = amount / length;
     let remainder = amount % length;
     let even = remainder == 0;
-    if even || distance_from == 0{
+    if even || distance_from == 0 {
         base
-    }
-    else {
+    } else {
         if distance_from <= remainder {
             base + 1
-        }
-        else {
+        } else {
             base
         }
     }
@@ -121,12 +119,19 @@ fn test_distance_from() {
 }
 
 fn get_largest_values_index(l: &[usize]) -> Option<(usize, usize)> {
-    l.into_iter().cloned().enumerate()
-        .fold(None, |acc, cur|
-            match acc {
-                None => Some(cur),
-                Some((_, val)) => if cur.1 > val { Some(cur) } else { acc }
-            })
+    l.into_iter()
+        .cloned()
+        .enumerate()
+        .fold(None, |acc, cur| match acc {
+            None => Some(cur),
+            Some((_, val)) => {
+                if cur.1 > val {
+                    Some(cur)
+                } else {
+                    acc
+                }
+            }
+        })
 }
 #[test]
 fn test_largest_index() {
@@ -134,5 +139,7 @@ fn test_largest_index() {
 }
 
 pub fn line_to_vec(l: &str) -> Vec<usize> {
-    l.split_whitespace().map(|t| t.parse::<usize>().unwrap()).collect()
+    l.split_whitespace()
+        .map(|t| t.parse::<usize>().unwrap())
+        .collect()
 }

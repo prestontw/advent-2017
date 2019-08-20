@@ -17,6 +17,6 @@ fn main() {
     match &action[..] {
         "part1" => println!("{}", day7::bottom_program(&input)),
         "part2" => println!("{}", day7::balanced_weight(&input)),
-        _ => println!("not supported")
+        _ => println!("not supported"),
     }
 }

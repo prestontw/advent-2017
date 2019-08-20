@@ -14,8 +14,7 @@ fn next_index(a: &[isize], cur_index: usize) -> Option<isize> {
 fn get_next_array2(mut v: Vec<isize>, index: usize) -> Vec<isize> {
     if v[index] >= 3 {
         v[index] -= 1;
-    }
-    else {
+    } else {
         v[index] += 1;
     }
     v
@@ -27,8 +26,14 @@ fn get_next_array(mut v: Vec<isize>, index: usize) -> Vec<isize> {
 }
 #[test]
 fn test_get_next_array() {
-    assert_eq!(get_next_array(vec![0, 3, 0, 1, -3], 0), vec![1, 3, 0, 1, -3]);
-    assert_eq!(get_next_array(vec![2, 4, 0, 1, -3], 4), vec![2, 4, 0, 1, -2]);
+    assert_eq!(
+        get_next_array(vec![0, 3, 0, 1, -3], 0),
+        vec![1, 3, 0, 1, -3]
+    );
+    assert_eq!(
+        get_next_array(vec![2, 4, 0, 1, -3], 4),
+        vec![2, 4, 0, 1, -2]
+    );
 }
 
 pub fn get_num_till_out_of_bounds2(mut v: Vec<isize>) -> usize {

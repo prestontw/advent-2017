@@ -1035,6 +1035,12 @@ fn main() {
 -875
 -393
 -979";
-    println!("{}", day5::get_num_till_out_of_bounds(day5::string_to_vec(input)));
-    println!("{}", day5::get_num_till_out_of_bounds2(day5::string_to_vec(input)));
+    println!(
+        "{}",
+        day5::get_num_till_out_of_bounds(day5::string_to_vec(input))
+    );
+    println!(
+        "{}",
+        day5::get_num_till_out_of_bounds2(day5::string_to_vec(input))
+    );
 }

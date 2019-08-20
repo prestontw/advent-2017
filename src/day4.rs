@@ -8,33 +8,48 @@ pub fn str_to_passphrases(i: &str) -> Vec<Vec<&str>> {
     i.lines().map(|l| str_to_passphrase(l)).collect()
 }
 
-fn to_hashset<'a, I, S>(i: I) -> HashSet<S> where I: IntoIterator<Item = S>,
-S: Into<&'a str> + Eq + std::hash::Hash {
+fn to_hashset<'a, I, S>(i: I) -> HashSet<S>
+where
+    I: IntoIterator<Item = S>,
+    S: Into<&'a str> + Eq + std::hash::Hash,
+{
     i.into_iter().collect()
 }
 
-fn to_hashset2<'a, I, S>(i: I) -> HashSet<S> where I: IntoIterator<Item = S>,
-S: Into<String> + Eq + std::hash::Hash {
+fn to_hashset2<'a, I, S>(i: I) -> HashSet<S>
+where
+    I: IntoIterator<Item = S>,
+    S: Into<String> + Eq + std::hash::Hash,
+{
     i.into_iter().collect()
 }
 
-pub fn num_matching_lengths<'a, I>(i: I) -> usize where I: IntoIterator<Item = Vec<&'a str>> + Clone {
+pub fn num_matching_lengths<'a, I>(i: I) -> usize
+where
+    I: IntoIterator<Item = Vec<&'a str>> + Clone,
+{
     let temp = i.clone().into_iter().map(to_hashset2);
-    i.into_iter().zip(temp)
+    i.into_iter()
+        .zip(temp)
         .map(|(a, b)| a.len() == b.len())
-        .map(|b| if b {1} else {0})
+        .map(|b| if b { 1 } else { 0 })
         .sum()
 }
 
 fn sort_str<'a, 'b: 'a>(i: &'a str) -> String {
     let mut chars: Vec<char> = i.chars().collect();
     chars.sort();
-    let s = chars.into_iter().fold(String::new(), |mut acc, cur|
-        { acc.push(cur); acc });
+    let s = chars.into_iter().fold(String::new(), |mut acc, cur| {
+        acc.push(cur);
+        acc
+    });
     s
 }
 
-pub fn part_two<'a, I>(i: I) -> usize where I: IntoIterator<Item = Vec<&'a str>> + Clone {
+pub fn part_two<'a, I>(i: I) -> usize
+where
+    I: IntoIterator<Item = Vec<&'a str>> + Clone,
+{
     let mut count = 0;
     for line in i {
         let temp = line.clone();
@@ -44,7 +59,9 @@ pub fn part_two<'a, I>(i: I) -> usize where I: IntoIterator<Item = Vec<&'a str>>
         let sorted_word_vec: Vec<String> = temp.into_iter().map(sort_str).collect();
         let temp = sorted_word_vec.iter().map(|s| &**s);
         let hashed = to_hashset(temp);
-        if line.len() == hashed.len() { count += 1; }
+        if line.len() == hashed.len() {
+            count += 1;
+        }
     }
     count
 }

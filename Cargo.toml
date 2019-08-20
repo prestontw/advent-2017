@@ -1,0 +1,19 @@
+[package]
+name = "advent-2017"
+version = "0.1.0"
+authors = ["Preston Tunnell Wilson <preston_tunnell_wilson@brown.edu>"]
+edition = "2018"
+
+[dependencies]
+nom = "^4.1"
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "day10"
+harness = false
+
+[[bench]]
+name = "day12"
+harness = false

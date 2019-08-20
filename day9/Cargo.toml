@@ -1,8 +1,0 @@
-[package]
-name = "day9"
-version = "0.1.0"
-authors = ["Preston TW <preston_tunnell_wilson@brown.edu>"]
-edition = "2018"
-
-[dependencies]
-nom = "^4.1"

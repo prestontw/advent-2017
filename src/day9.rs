@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate nom;
 pub use self::parse::group;
 
 mod parse {

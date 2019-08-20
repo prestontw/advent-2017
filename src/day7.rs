@@ -1,6 +1,3 @@
-// include nom
-#[macro_use]
-extern crate nom;
 use nom::types::CompleteStr;
 use nom::{alpha, digit, space};
 use std::collections::{HashMap, HashSet};

@@ -1,7 +1,3 @@
-#![feature(nll)]
-
-#[macro_use]
-extern crate nom;
 use nom::types::CompleteStr;
 use std::collections::HashMap;
 mod parse {

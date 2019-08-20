@@ -1,6 +1,3 @@
-#![feature(vec_remove_item)]
-#[macro_use]
-extern crate nom;
 use nom::types::CompleteStr;
 use nom::{digit, separated_list};
 use std::collections::{HashMap, HashSet};

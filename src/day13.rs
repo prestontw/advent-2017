@@ -1,6 +1,4 @@
 #![allow(non_snake_case)]
-#[macro_use]
-extern crate nom;
 use nom::types::CompleteStr;
 use self::parse::parseLine;
 use std::collections::{HashMap, HashSet};

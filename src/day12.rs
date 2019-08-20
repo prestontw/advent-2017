@@ -91,10 +91,10 @@ pub fn num_groups(i: &str) -> usize {
     let mut keys: Vec<usize> = adj_map.keys().cloned().collect();
     let mut count = 0;
     while keys.len() > 0 {
-        let curElement = keys.pop();
-        let curGroup = encompassing_group(curElement.unwrap(), &adj_map);
+        let cur_element = keys.pop();
+        let cur_group = encompassing_group(cur_element.unwrap(), &adj_map);
         // remove all elements of curGroup from keys
-        for elem in curGroup {
+        for elem in cur_group {
             keys.remove_item(&elem);
         }
         count += 1;

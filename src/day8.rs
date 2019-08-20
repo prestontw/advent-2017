@@ -215,14 +215,14 @@ fn get_value_in_register(r: &str, store: &HashMap<String, isize>) -> isize {
     *store.get(r).unwrap_or(&0)
 }
 
-fn function_for_operation(op: &Operation) -> Box<Fn(isize, isize) -> isize> {
+fn function_for_operation(op: &Operation) -> Box<dyn Fn(isize, isize) -> isize> {
     match op {
         Operation::Increase => Box::new(|a, b| a + b),
         Operation::Decrease => Box::new(|a, b| a - b),
     }
 }
 
-fn function_for_question(q: &Question) -> Box<Fn(isize, isize) -> bool> {
+fn function_for_question(q: &Question) -> Box<dyn Fn(isize, isize) -> bool> {
     match q {
         Question::Gt => Box::new(|a, b| a > b),
         Question::Ge => Box::new(|a, b| a >= b),

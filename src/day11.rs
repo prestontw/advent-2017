@@ -28,8 +28,8 @@ pub fn max_distance_for_directions(i: &str) -> usize {
 
 #[derive(Debug, PartialEq)]
 struct Position {
-    SN: isize,
-    WE: isize,
+    sn: isize,
+    we: isize,
 }
 
 fn string_to_direction(i: &str) -> Direction {
@@ -47,8 +47,8 @@ fn string_to_direction(i: &str) -> Direction {
 
 // really, this should take in a position rather than a stream
 fn hex_distance(p: &Position) -> usize {
-    let z_diff = p.SN + p.WE;
-    max(p.SN.abs(), max(p.WE.abs(), z_diff.abs())) as usize
+    let z_diff = p.sn + p.we;
+    max(p.sn.abs(), max(p.we.abs(), z_diff.abs())) as usize
 }
 #[test]
 fn test_hex_distance() {
@@ -83,7 +83,7 @@ where
     I: IntoIterator<Item = &'a Direction>,
 {
     ds.into_iter().fold(
-        (0, Position { SN: 0, WE: 0 }),
+        (0, Position { sn: 0, we: 0 }),
         |(cur_max, cur_pos), cur_direction| {
             let new_pos = update_position(cur_pos, &cur_direction);
             let cur_distance = hex_distance(&new_pos);
@@ -96,7 +96,7 @@ fn position<'a, I>(ds: I) -> Position
 where
     I: IntoIterator<Item = &'a Direction>,
 {
-    ds.into_iter().fold(Position { SN: 0, WE: 0 }, |acc, cur| {
+    ds.into_iter().fold(Position { sn: 0, we: 0 }, |acc, cur| {
         update_position(acc, cur)
     })
 }
@@ -105,7 +105,7 @@ fn test_positions() {
     use self::Direction::*;
     assert_eq!(
         position(&vec![Southeast, Southwest, Southeast, Southwest, Southwest]),
-        Position { SN: -2, WE: -1 }
+        Position { sn: -2, we: -1 }
     );
 }
 
@@ -113,29 +113,29 @@ fn update_position(mut p: Position, d: &Direction) -> Position {
     use self::Direction::*;
     match d {
         North => {
-            p.SN += 1;
+            p.sn += 1;
             p
         }
         South => {
-            p.SN -= 1;
+            p.sn -= 1;
             p
         }
         Northeast => {
-            p.WE += 1;
+            p.we += 1;
             p
         }
         Northwest => {
-            p.WE -= 1;
-            p.SN += 1;
+            p.we -= 1;
+            p.sn += 1;
             p
         }
         Southwest => {
-            p.WE -= 1;
+            p.we -= 1;
             p
         }
         Southeast => {
-            p.WE += 1;
-            p.SN -= 1;
+            p.we += 1;
+            p.sn -= 1;
             p
         }
     }

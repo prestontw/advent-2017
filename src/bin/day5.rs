@@ -1,4 +1,5 @@
-extern crate day5;
+extern crate advent_2017;
+use advent_2017::day5;
 
 fn main() {
     let input = "2

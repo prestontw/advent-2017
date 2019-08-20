@@ -1,4 +1,5 @@
-extern crate day8;
+extern crate advent_2017;
+use advent_2017::day8;
 use std::io::{self, Read};
 
 fn main() {

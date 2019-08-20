@@ -1,4 +1,5 @@
-extern crate day1;
+extern crate advent_2017;
+use advent_2017::day1;
 use day1::{captcha, string_to_vec, part_two};
 
 fn main() {

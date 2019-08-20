@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate criterion;
-extern crate day10;
+extern crate advent_2017;
+use advent_2017::day10;
 
 use criterion::Criterion;
 

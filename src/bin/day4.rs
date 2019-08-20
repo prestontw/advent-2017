@@ -1,4 +1,5 @@
-extern crate day4;
+extern crate advent_2017;
+use advent_2017::day4;
 
 fn main() {
     let input = "pphsv ojtou brvhsj cer ntfhlra udeh ccgtyzc zoyzmh jum lugbnk

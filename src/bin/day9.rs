@@ -1,4 +1,5 @@
-extern crate day9;
+extern crate advent_2017;
+use advent_2017::day9;
 use nom::types::CompleteStr;
 use std::io::{self, Read};
 

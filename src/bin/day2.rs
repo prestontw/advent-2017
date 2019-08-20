@@ -1,4 +1,5 @@
-extern crate day2;
+extern crate advent_2017;
+use advent_2017::day2;
 
 fn main() {
     let input = "1136	1129	184	452	788	1215	355	1109	224	1358	1278	176	1302	186	128	1148

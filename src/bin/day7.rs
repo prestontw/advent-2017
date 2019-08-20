@@ -1,4 +1,5 @@
-extern crate day7;
+extern crate advent_2017;
+use advent_2017::day7;
 use std::env;
 use std::io::{self, Read};
 

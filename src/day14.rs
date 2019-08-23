@@ -3,7 +3,12 @@
 use crate::day10;
 
 pub fn gridify_hash(i: &str) -> Vec<String> {
-  vec!["##.#.#..", "........"].into_iter().map(|s| s.to_string()).collect()
+  let i = i.to_string();
+  let rows = (0..128).into_iter().map(|n| i.clone() + "-" + &n.to_string());
+  let knots = rows.map(|r| day10::string_to_hash_string(&r));
+  // format each character as binary
+  // then map each 1 to #, 0 to .
+  knots.map(|s| s.to_string()).collect()
 }
 
 #[test]

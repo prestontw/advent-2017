@@ -19,17 +19,17 @@ mod parse {
         );
     }
 
-    /**
-     * parsing a group can either be:
-     * empty group: {};
-     * garbage: garbage parser for this!;
-     * or recursive group: {group};
-     *
-     * Really, can combine the first and third as many0!(group).
-     * And, have to think of it many0!(alt!(group | garbage))
-     * since can alternate groups and garbage
-     * Need to include commas in here too...
-     */
+    //
+    // parsing a group can either be:
+    // empty group: {};
+    // garbage: garbage parser for this!;
+    // or recursive group: {group};
+    //
+    // Really, can combine the first and third as many0!(group).
+    // And, have to think of it many0!(alt!(group | garbage))
+    // since can alternate groups and garbage
+    // Need to include commas in here too...
+    //
     named!(pub group<CompleteStr, Group>,
   do_parse!(
     tag!("{") >>

@@ -3,10 +3,10 @@ use nom::{digit, separated_list};
 use std::collections::{HashMap, HashSet};
 
 // include nom
-/**
- * examples include 0 <-> 2
- * 3 <-> 2, 4
- */
+//
+// examples include 0 <-> 2
+// 3 <-> 2, 4
+// 
 named!(parse_line<CompleteStr, (usize, Vec<usize>)>,
   do_parse!(
     start: digit >>
@@ -25,13 +25,6 @@ fn test_parse_line() {
         parse_line(CompleteStr("32 <-> 2, 4")),
         Ok((CompleteStr(""), (32, vec![2, 4])))
     );
-}
-
-fn lines_to_adj_map<'a, I>(lns: I) -> HashMap<usize, Vec<usize>>
-where
-    I: IntoIterator<Item = &'a (usize, Vec<usize>)>,
-{
-    lns.into_iter().cloned().collect()
 }
 
 fn encompassing_group(e: usize, adj_map: &HashMap<usize, Vec<usize>>) -> HashSet<usize> {

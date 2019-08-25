@@ -21,10 +21,10 @@ impl Iterator for Generator {
     }
 }
 
-const TWO_SEVENTEENTH: usize = 131072;
+const SIXTEEN_BITS: usize = 0b1111111111111111;
 
 fn sixteen_bits(u: usize) -> usize {
-    u % TWO_SEVENTEENTH
+    u & SIXTEEN_BITS
 }
 
 pub fn part1(a: usize, b: usize, len: usize) -> usize {

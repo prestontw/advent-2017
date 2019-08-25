@@ -51,6 +51,7 @@ fn regions(g: Vec<Vec<usize>>) -> usize {
     }
   }
 
+  println!("{:?}", temp);
   regions
 }
 
@@ -61,12 +62,10 @@ fn test_regions() {
 }
 
 fn spread_region(i: usize, j: usize, region: usize, grid: &mut [ Vec<usize> ], reference: &[Vec<usize>]) {
-  println!("{:?}, {:?}", grid, reference);
-  println!("{}, {}", i, j);
   let index = grid.get(i).and_then(|row| row.get(j));
   println!("{:?}", index);
-  if index.is_some() {
-    if grid[i][j] == 0 && reference[i][j] != 0 {
+  if index == Some(&0) {
+    if reference[i][j] != 0 {
       grid[i][j] = region;
       if i > 0 { spread_region(i - 1, j, region, grid, reference); }
       spread_region(i + 1, j, region, grid, reference);

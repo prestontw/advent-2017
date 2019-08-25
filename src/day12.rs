@@ -6,7 +6,7 @@ use std::collections::{HashMap, HashSet};
 //
 // examples include 0 <-> 2
 // 3 <-> 2, 4
-// 
+//
 named!(parse_line<CompleteStr, (usize, Vec<usize>)>,
   do_parse!(
     start: digit >>

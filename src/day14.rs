@@ -23,7 +23,72 @@ pub fn part1(i: &str) -> usize {
 }
 
 pub fn part2(i: &str) -> usize {
-  0
+  let grid = oneify_hash(i);
+  regions(grid)
+}
+
+fn regions(g: Vec<Vec<usize>>) -> usize {
+  let height = g.len();
+  let width = g[0].len();
+  let mut regions = 0;
+
+  let mut temp = vec![];
+  for _i in 0..height {
+    let row = (0..width).into_iter().map(|_i| 0).collect::<Vec<usize>>();
+    temp.push(row);
+  }
+
+  for i in 0..height {
+    for j in 0..width {
+      // check to see if temp[i][j] is nonzero
+      if temp[i][j] == 0 {
+        if g[i][j] != 0 {
+          // then we have a new region!
+          regions += 1;
+          spread_region(i, j, regions, &mut temp, &g);
+        }
+      }
+    }
+  }
+
+  regions
+}
+
+#[test]
+fn test_regions() {
+  let grid = vec![vec![1, 0, 0], vec![0, 1, 1], vec![1, 1, 1]];
+  assert_eq!(regions(grid), 2);
+}
+
+fn spread_region(i: usize, j: usize, region: usize, grid: &mut [ Vec<usize> ], reference: &[Vec<usize>]) {
+  println!("{:?}, {:?}", grid, reference);
+  println!("{}, {}", i, j);
+  let index = grid.get(i).and_then(|row| row.get(j));
+  println!("{:?}", index);
+  if index.is_some() {
+    if grid[i][j] == 0 && reference[i][j] != 0 {
+      grid[i][j] = region;
+      if i > 0 { spread_region(i - 1, j, region, grid, reference); }
+      spread_region(i + 1, j, region, grid, reference);
+      if j > 0 { spread_region(i, j - 1, region, grid, reference); }
+      spread_region(i, j + 1, region, grid, reference);
+    }
+  } 
+}
+
+#[test]
+fn test_spread_region() {
+  let three_by_three = vec![vec![1, 0, 0], vec![0, 1, 1], vec![1, 1, 1]];
+  let mut grid = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]];
+  spread_region(0, 0, 1, &mut grid, &three_by_three);
+  assert_eq!(grid, vec![vec![1, 0, 0], vec![0, 0, 0], vec![0, 0, 0]]);
+
+  spread_region(1, 1, 2, &mut grid, &three_by_three);
+  assert_eq!(grid, vec![vec![1, 0, 0], vec![0, 2, 2], vec![2, 2, 2]]);
+
+  let saved_grid = grid.clone();
+  spread_region(100, 100, 20, &mut grid, &three_by_three);
+  assert_eq!(grid, saved_grid);
 }
 
 pub fn string_to_number(i: char) -> Option<u32> {

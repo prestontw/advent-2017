@@ -37,12 +37,49 @@ pub fn part2(i: &str) -> Vec<char> {
     let mut line: Vec<char> = (b'a'..=b'p').map(char::from).collect::<Vec<_>>();
     // 0p 1k 2g 3n 4h 5o 6m 7e 8l 9f 10d 11i 12b 13j 14a 15c
     // could probably do something with remainder of a billion and apply that?
+    // 4, 7; 8, 11; remaining all form cycles
     let permutate: Vec<usize> = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
     let instructions = parse_instructions(i);
     for _ in 0..1_000_000_000 {
         execute_dance(&mut line, &instructions);
     }
     line
+}
+
+fn permutate<A>(l: &mut [A], switches: &[usize], times: usize)
+where A: Copy
+{
+    let mut seen: Vec<usize> = (0..l.len()).collect();
+    while !seen.is_empty() {
+        let start = seen.pop().unwrap();
+        // while haven't found start
+        let mut temp: A = l[switches[start]];
+    }
+}
+
+fn get_cycle(indices: &[usize], start: usize) -> Vec<usize> {
+    let mut current_index = start;
+    let mut ret = Vec::with_capacity(indices.len());
+    ret.push(current_index);
+    while indices[current_index] != start {
+        current_index = indices[current_index];
+        ret.push(current_index);
+    }
+
+    ret
+}
+
+#[test]
+fn test_get_cycle() {
+    //              0   1   2   3  4  5  6  7   8   9 10 11 12 13 14 15
+    let arr = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
+    assert_eq!(get_cycle(&arr, 0), vec![0, 14, 5, 9, 13, 3, 10, 1, 12, 6, 2, 15]);
+    assert_eq!(get_cycle(&arr, 4), vec![4, 7]);
+    assert_eq!(get_cycle(&arr, 8), vec![8, 11]);
+
+    let arr = vec![0, 2, 1];
+    assert_eq!(get_cycle(&arr, 0), vec![0]);
+    assert_eq!(get_cycle(&arr, 1), vec![1, 2]);
 }
 
 fn parse_instructions(i: &str) -> Vec<DanceMoves> {

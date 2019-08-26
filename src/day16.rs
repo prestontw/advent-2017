@@ -6,9 +6,9 @@ enum DanceMoves {
 }
 
 trait Dance {
-    fn spin(&mut self, s: usize) {}
-    fn exchange(&mut self, one: usize, two: usize) {}
-    fn partner(&mut self, one: char, two: char){}
+    fn spin(&mut self, _: usize) {}
+    fn exchange(&mut self, _: usize, _: usize) {}
+    fn partner(&mut self, _: char, _: char){}
 }
 
 impl Dance for Vec<char> {
@@ -33,28 +33,77 @@ pub fn part1(i: &str) -> Vec<char> {
     line
 }
 
-pub fn part2(i: &str) -> Vec<char> {
+pub fn part2(_: &str) -> Vec<char> {
     let mut line: Vec<char> = (b'a'..=b'p').map(char::from).collect::<Vec<_>>();
     // 0p 1k 2g 3n 4h 5o 6m 7e 8l 9f 10d 11i 12b 13j 14a 15c
     // could probably do something with remainder of a billion and apply that?
     // 4, 7; 8, 11; remaining all form cycles
-    let permutate: Vec<usize> = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
-    let instructions = parse_instructions(i);
-    for _ in 0..1_000_000_000 {
-        execute_dance(&mut line, &instructions);
-    }
+    let permutation: Vec<usize> = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
+    permutate(&mut line, &permutation, 1_000_000_000);
     line
 }
 
 fn permutate<A>(l: &mut [A], switches: &[usize], times: usize)
-where A: Copy
+where A: Copy + std::fmt::Debug
 {
     let mut seen: Vec<usize> = (0..l.len()).collect();
     while !seen.is_empty() {
         let start = seen.pop().unwrap();
-        // while haven't found start
-        let mut temp: A = l[switches[start]];
+        let cycle = get_cycle(switches, start);
+        println!("{:?}", cycle);
+        let count = times % cycle.len();
+        for _ in 0..count {
+            apply_permutation(l, &cycle);
+            println!("done: {:?}", l);
+        }
+        for index in cycle {
+            seen.remove_item(&index);
+        }
     }
+}
+
+fn apply_permutation<A>(l: &mut [A], cycle: &[usize]) where A: Copy + std::fmt::Debug {
+    if cycle.len() > 1 {
+        let temp = l[cycle[cycle.len() - 1]];
+        // shift everything to the right
+        for pair in cycle.windows(2).rev() {
+            l[pair[1]] = l[pair[0]];
+            println!("{:?}", l);
+        }
+        l[cycle[0]] = temp;
+        println!("{:?}", l);
+    }
+}
+
+#[test]
+fn test_apply_permutation() {
+    let mut arr = vec!['a', 'b'];
+    apply_permutation(&mut arr, &vec![1, 0]);
+    assert_eq!(arr, vec!['b', 'a']);
+
+    let mut arr = vec!['a', 'b', 'c', 'd'];
+    apply_permutation(&mut arr, &vec![0, 3, 2, 1]);
+    assert_eq!(arr, vec!['b', 'c', 'd', 'a']);
+
+    let mut arr = vec!['a', 'b', 'c', 'd', 'e', 'f'];
+    let cycle = vec![0, 5, 2, 4, 3, 1];
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['b', 'd', 'f', 'e', 'c', 'a']);
+
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['d', 'e', 'a', 'c', 'f', 'b']);
+
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['e', 'c', 'b', 'f', 'a', 'd']);
+
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['c', 'f', 'd', 'a', 'b', 'e']);
+
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['f', 'a', 'e', 'b', 'd', 'c']);
+
+    apply_permutation(&mut arr, &cycle);
+    assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e', 'f']);
 }
 
 fn get_cycle(indices: &[usize], start: usize) -> Vec<usize> {

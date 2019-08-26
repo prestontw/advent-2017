@@ -8,7 +8,7 @@ enum DanceMoves {
 trait Dance {
     fn spin(&mut self, _: usize) {}
     fn exchange(&mut self, _: usize, _: usize) {}
-    fn partner(&mut self, _: char, _: char){}
+    fn partner(&mut self, _: char, _: char) {}
 }
 
 impl Dance for Vec<char> {
@@ -33,18 +33,38 @@ pub fn part1(i: &str) -> Vec<char> {
     line
 }
 
-pub fn part2(_: &str) -> Vec<char> {
+pub fn part2(i: &str) -> Vec<char> {
     let mut line: Vec<char> = (b'a'..=b'p').map(char::from).collect::<Vec<_>>();
-    // 0p 1k 2g 3n 4h 5o 6m 7e 8l 9f 10d 11i 12b 13j 14a 15c
-    // could probably do something with remainder of a billion and apply that?
-    // 4, 7; 8, 11; remaining all form cycles
-    let permutation: Vec<usize> = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
-    permutate(&mut line, &permutation, 1_000_000_000);
-    line
+    let original = line.clone();
+    let instructions = parse_instructions(i);
+    // can't permutate because have partner! not just index based permutation
+    // permutate(&mut line, &permutation, 1_000_000_000);
+    let mut repeat = None;
+    const TIMES: usize = 1_000_000_000;
+    for i in 0..TIMES {
+        execute_dance(&mut line, &instructions);
+        if line == original {
+            println!("repeat: {}", i);
+            repeat = Some(i + 1);
+            break;
+        }
+    }
+    match repeat {
+        None => line,
+        Some(v) => {
+            // remainder of 1_000_000_000 and v, then apply that many times
+            let actual = TIMES % v;
+            for _i in 0..actual {
+                execute_dance(&mut line, &instructions);
+            }
+            line
+        }
+    }
 }
 
 fn permutate<A>(l: &mut [A], switches: &[usize], times: usize)
-where A: Copy + std::fmt::Debug
+where
+    A: Copy + std::fmt::Debug,
 {
     let mut seen: Vec<usize> = (0..l.len()).collect();
     while !seen.is_empty() {
@@ -62,7 +82,10 @@ where A: Copy + std::fmt::Debug
     }
 }
 
-fn apply_permutation<A>(l: &mut [A], cycle: &[usize]) where A: Copy + std::fmt::Debug {
+fn apply_permutation<A>(l: &mut [A], cycle: &[usize])
+where
+    A: Copy + std::fmt::Debug,
+{
     if cycle.len() > 1 {
         let temp = l[cycle[cycle.len() - 1]];
         // shift everything to the right
@@ -122,7 +145,10 @@ fn get_cycle(indices: &[usize], start: usize) -> Vec<usize> {
 fn test_get_cycle() {
     //              0   1   2   3  4  5  6  7   8   9 10 11 12 13 14 15
     let arr = vec![14, 12, 15, 10, 7, 9, 2, 4, 11, 13, 1, 8, 6, 3, 5, 0];
-    assert_eq!(get_cycle(&arr, 0), vec![0, 14, 5, 9, 13, 3, 10, 1, 12, 6, 2, 15]);
+    assert_eq!(
+        get_cycle(&arr, 0),
+        vec![0, 14, 5, 9, 13, 3, 10, 1, 12, 6, 2, 15]
+    );
     assert_eq!(get_cycle(&arr, 4), vec![4, 7]);
     assert_eq!(get_cycle(&arr, 8), vec![8, 11]);
 
@@ -138,14 +164,15 @@ fn parse_instructions(i: &str) -> Vec<DanceMoves> {
 fn parse_segment(i: &str) -> DanceMoves {
     let remainder: String = i.chars().skip(1).collect();
     match i.chars().nth(0).unwrap() {
-        's' => {
-            DanceMoves::Spin(remainder.parse::<usize>().unwrap())
-        }
+        's' => DanceMoves::Spin(remainder.parse::<usize>().unwrap()),
         'x' => {
             let split: Vec<&str> = remainder.split('/').collect();
             let first = split[0];
             let second = split[1];
-            DanceMoves::Exchange(first.parse::<usize>().unwrap(), second.parse::<usize>().unwrap())
+            DanceMoves::Exchange(
+                first.parse::<usize>().unwrap(),
+                second.parse::<usize>().unwrap(),
+            )
         }
         'p' => {
             let split: Vec<&str> = remainder.split('/').collect();
@@ -153,7 +180,7 @@ fn parse_segment(i: &str) -> DanceMoves {
             let second = split[1].chars().nth(0).unwrap();
             DanceMoves::Partner(first, second)
         }
-        _ => unimplemented!()
+        _ => unimplemented!(),
     }
 }
 
@@ -170,8 +197,11 @@ fn execute_dance(line: &mut Vec<char>, instructions: &[DanceMoves]) {
 #[test]
 fn test_dance_move_sequence() {
     let mut line = vec!['a', 'b', 'c', 'd', 'e'];
-    let instructions = vec![DanceMoves::Spin(1),
-    DanceMoves::Exchange(3, 4), DanceMoves::Partner('e', 'b')];
+    let instructions = vec![
+        DanceMoves::Spin(1),
+        DanceMoves::Exchange(3, 4),
+        DanceMoves::Partner('e', 'b'),
+    ];
     execute_dance(&mut line, &instructions);
     assert_eq!(line, vec!['b', 'a', 'e', 'd', 'c']);
 }
@@ -179,6 +209,12 @@ fn test_dance_move_sequence() {
 #[test]
 fn test_parse() {
     let instructions = "s1,x3/4,pe/b";
-    assert_eq!(parse_instructions(instructions), vec![DanceMoves::Spin(1),
-    DanceMoves::Exchange(3, 4), DanceMoves::Partner('e', 'b')]);
+    assert_eq!(
+        parse_instructions(instructions),
+        vec![
+            DanceMoves::Spin(1),
+            DanceMoves::Exchange(3, 4),
+            DanceMoves::Partner('e', 'b')
+        ]
+    );
 }

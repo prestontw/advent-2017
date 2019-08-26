@@ -82,6 +82,33 @@ where
     }
 }
 
+#[test]
+fn test_permutate() {
+    let mut arr = vec!['a', 'b', 'c', 'd', 'e'];
+    let cycle = vec![1, 0, 4, 2, 3];
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['b', 'a', 'd', 'e', 'c']);
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['a', 'b', 'e', 'c', 'd']);
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['b', 'a', 'c', 'd', 'e']);
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['a', 'b', 'd', 'e', 'c']);
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['b', 'a', 'e', 'c', 'd']);
+
+    permutate(&mut arr, &cycle, 1);
+    assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e']);
+
+    permutate(&mut arr, &cycle, 6);
+    assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e']);
+}
+
 fn apply_permutation<A>(l: &mut [A], cycle: &[usize])
 where
     A: Copy + std::fmt::Debug,

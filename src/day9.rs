@@ -57,7 +57,7 @@ mod parse {
                 Group::Group {
                     children: vec![Group::Group {
                         children: vec![Group::Group {
-                            children: vec![Group::Garbage("".to_string())]
+                            children: vec![Group::Garbage(",},<".to_string())]
                         }]
                     }]
                 }
@@ -119,10 +119,10 @@ mod parse {
                 CompleteStr(""),
                 Group::Group {
                     children: vec![
-                        Group::Garbage("".to_string()),
-                        Group::Garbage("".to_string()),
-                        Group::Garbage("".to_string()),
-                        Group::Garbage("".to_string())
+                        Group::Garbage("a".to_string()),
+                        Group::Garbage("a".to_string()),
+                        Group::Garbage("a".to_string()),
+                        Group::Garbage("a".to_string())
                     ]
                 }
             ))
@@ -134,16 +134,16 @@ mod parse {
                 Group::Group {
                     children: vec![
                         Group::Group {
-                            children: vec![Group::Garbage("".to_string())]
+                            children: vec![Group::Garbage("ab".to_string())]
                         },
                         Group::Group {
-                            children: vec![Group::Garbage("".to_string())]
+                            children: vec![Group::Garbage("ab".to_string())]
                         },
                         Group::Group {
-                            children: vec![Group::Garbage("".to_string())]
+                            children: vec![Group::Garbage("ab".to_string())]
                         },
                         Group::Group {
-                            children: vec![Group::Garbage("".to_string())]
+                            children: vec![Group::Garbage("ab".to_string())]
                         },
                     ]
                 }
@@ -155,7 +155,7 @@ mod parse {
                 CompleteStr(""),
                 Group::Group {
                     children: vec![Group::Group {
-                        children: vec![Group::Garbage("".to_string())]
+                        children: vec![Group::Garbage("a},{<a},{<a},{<ab".to_string())]
                     }]
                 }
             ))

@@ -62,6 +62,7 @@ pub fn part2(i: &str) -> Vec<char> {
     }
 }
 
+#[allow(dead_code)]
 fn permutate<A>(l: &mut [A], switches: &[usize], times: usize)
 where
     A: Copy + std::fmt::Debug,

@@ -63,14 +63,20 @@ fn test_inserts() {
     assert_eq!(spin.buffer(), vec![0, 9, 5, 7, 2, 4, 3, 8, 6, 1]);
 }
 
-pub fn part1(steps: usize) -> usize {
-    let mut spin = SpinLock::new(2018);
-    for i in 1..=2017 {
+fn naive_approach(steps: usize, rounds: usize, interest: usize) -> usize {
+    // adding on assumed zero
+    let rounds = rounds + 1;
+    let mut spin = SpinLock::new(rounds);
+    for i in 1..rounds {
         spin.step(steps);
         spin.insert(i);
     }
-    let index = spin.buffer().into_iter().position(|c| c == 2017).unwrap();
-    spin.buffer()[(index + 1) % 2018]
+    let index = spin.buffer().into_iter().position(|c| c == interest).unwrap();
+    spin.buffer()[(index + 1) % rounds]
+}
+
+pub fn part1(steps: usize) -> usize {
+    naive_approach(steps, 2017, 2017)
 }
 
 pub fn part2(steps: usize) -> usize {
@@ -87,4 +93,5 @@ pub fn part2(steps: usize) -> usize {
 #[test]
 fn test_part1() {
     assert_eq!(part1(3), 638);
+    assert_eq!(part1(348), 417);
 }

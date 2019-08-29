@@ -75,19 +75,40 @@ fn naive_approach(steps: usize, rounds: usize, interest: usize) -> usize {
     spin.buffer()[(index + 1) % rounds]
 }
 
+fn math_approach(steps: usize, rounds: usize) -> usize {
+    let mut zero_position = 0;
+    let mut current_position = 1;
+    let mut after = 1;
+    for round in 2..=rounds {
+        current_position = (current_position + steps) % round;
+        if current_position == zero_position {
+            after = round;
+        } else if current_position < zero_position || current_position == round {
+            zero_position += 1;
+        }
+        current_position += 1;
+    }
+    after
+}
+#[test]
+fn test_math_approach() {
+    assert_eq!(math_approach(3, 1), 1);
+    assert_eq!(math_approach(3, 2), 2);
+    assert_eq!(math_approach(3, 3), 2);
+    assert_eq!(math_approach(3, 4), 2);
+    assert_eq!(math_approach(3, 5), 5);
+    assert_eq!(math_approach(3, 6), 5);
+    assert_eq!(math_approach(3, 7), 5);
+    assert_eq!(math_approach(3, 8), 5);
+    assert_eq!(math_approach(3, 9), 9);
+}
+
 pub fn part1(steps: usize) -> usize {
     naive_approach(steps, 2017, 2017)
 }
 
 pub fn part2(steps: usize) -> usize {
-    let size = 50_000_000;
-    let mut spin = SpinLock::new(size);
-    for i in 1..=size {
-        spin.step(steps);
-        spin.insert(i);
-    }
-    let index = spin.buffer().into_iter().position(|c| c == 0).unwrap();
-    spin.buffer()[(index + 1) % size]
+    math_approach(steps, 50_000_000)
 }
 
 #[test]

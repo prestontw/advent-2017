@@ -73,6 +73,17 @@ pub fn part1(steps: usize) -> usize {
     spin.buffer()[(index + 1) % 2018]
 }
 
+pub fn part2(steps: usize) -> usize {
+    let size = 50_000_000;
+    let mut spin = SpinLock::new(size);
+    for i in 1..=size {
+        spin.step(steps);
+        spin.insert(i);
+    }
+    let index = spin.buffer().into_iter().position(|c| c == 0).unwrap();
+    spin.buffer()[(index + 1) % size]
+}
+
 #[test]
 fn test_part1() {
     assert_eq!(part1(3), 638);

@@ -62,7 +62,8 @@ pub fn part2(i: &str) -> Vec<char> {
     }
 }
 
-fn permutate<A>(l: &mut [A], switches: &[usize], times: usize)
+#[allow(dead_code)]
+fn permutate_in_place<A>(l: &mut [A], switches: &[usize], times: usize)
 where
     A: Copy + std::fmt::Debug,
 {
@@ -77,9 +78,22 @@ where
             println!("done: {:?}", l);
         }
         for index in cycle {
+            // can switch this to be binary search/remove
             seen.remove_item(&index);
         }
     }
+}
+
+#[allow(dead_code)]
+fn permute_once<A>(l: &[A], switches: &[usize]) -> Vec<A>
+where
+A: Copy
+{
+    let mut ret = l.clone().to_vec();
+    for (index, value) in l.iter().enumerate() {
+        ret[switches[index]] = *value;
+    }
+    ret
 }
 
 #[test]
@@ -87,25 +101,25 @@ fn test_permutate() {
     let mut arr = vec!['a', 'b', 'c', 'd', 'e'];
     let cycle = vec![1, 0, 4, 2, 3];
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['b', 'a', 'd', 'e', 'c']);
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['a', 'b', 'e', 'c', 'd']);
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['b', 'a', 'c', 'd', 'e']);
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['a', 'b', 'd', 'e', 'c']);
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['b', 'a', 'e', 'c', 'd']);
 
-    permutate(&mut arr, &cycle, 1);
+    permutate_in_place(&mut arr, &cycle, 1);
     assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e']);
 
-    permutate(&mut arr, &cycle, 6);
+    permutate_in_place(&mut arr, &cycle, 6);
     assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e']);
 }
 
@@ -154,6 +168,10 @@ fn test_apply_permutation() {
 
     apply_permutation(&mut arr, &cycle);
     assert_eq!(arr, vec!['a', 'b', 'c', 'd', 'e', 'f']);
+
+    let mut arr = vec!['a', 'b', 'c', 'd'];
+    apply_permutation(&mut arr, &vec![1, 0]);
+    assert_eq!(arr, vec!['b', 'a', 'c', 'd'])
 }
 
 fn get_cycle(indices: &[usize], start: usize) -> Vec<usize> {

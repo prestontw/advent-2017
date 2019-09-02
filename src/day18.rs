@@ -48,7 +48,10 @@ impl Interpreter {
             recovered_sound: None,
         }
     }
-    fn operate<F>(&mut self, r: Register, v: Value, operand: F) where F: Fn(Number, Number) -> Number {
+    fn operate<F>(&mut self, r: Register, v: Value, operand: F)
+    where
+        F: Fn(Number, Number) -> Number,
+    {
         let v = self.value(v);
         let entry = self.registers.entry(r).or_insert(0);
         *entry = operand(*entry, v);
@@ -131,7 +134,7 @@ impl Interpreter {
     fn first_recover(&mut self) -> Option<Number> {
         while let Ok(output) = self.interpret_step() {
             if self.recovered_sound.is_some() {
-                break
+                break;
             }
         }
         self.recovered_sound
@@ -150,13 +153,13 @@ impl PartnerOutput {
     fn is_out_of_range(&self) -> bool {
         match self {
             PartnerOutput::OutOfRange => true,
-            _ => false
+            _ => false,
         }
     }
     fn is_waiting(&self) -> bool {
         match self {
             PartnerOutput::Waiting => true,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -171,7 +174,10 @@ impl Partner {
         }
     }
 
-    fn operate<F>(&mut self, r: Register, v: &Value, operand: F) where F: Fn(Number, Number) -> Number {
+    fn operate<F>(&mut self, r: Register, v: &Value, operand: F)
+    where
+        F: Fn(Number, Number) -> Number,
+    {
         let v = self.value(v);
         let entry = self.registers.entry(r).or_insert(0);
         *entry = operand(*entry, v);
@@ -193,7 +199,7 @@ impl Partner {
         if self.program_counter < 0 || self.program_counter > self.instructions.len() as isize {
             PartnerOutput::OutOfRange
         } else {
-            match self.instructions[ self.program_counter as usize ].clone() {
+            match self.instructions[self.program_counter as usize].clone() {
                 Send(v) => {
                     self.step();
                     PartnerOutput::Send(self.value(&v))
@@ -253,28 +259,14 @@ fn parse_input(i: &str) -> Vec<Instructions> {
     for line in i.lines() {
         let parts: Vec<&str> = line.split(' ').collect();
         let result = match parts[0] {
-            "set" => {
-                Instructions::Set(parse_to_register(parts[1]), parse_to_value(parts[2]))
-            }
-            "add" => {
-                Instructions::Add(parse_to_register(parts[1]), parse_to_value(parts[2]))
-            }
-            "mul" => {
-                Instructions::Mul(parse_to_register(parts[1]), parse_to_value(parts[2]))
-            }
-            "mod" => {
-                Instructions::Mod(parse_to_register(parts[1]), parse_to_value(parts[2]))
-            }
-            "snd" => {
-                Instructions::Send(parse_to_value(parts[1]))
-            }
-            "rcv" => {
-                Instructions::Recover(parse_to_register(parts[1]))
-            }
-            "jgz" => {
-                Instructions::Jump(parse_to_value(parts[1]), parse_to_value(parts[2]))
-            }
-            _ => unimplemented!()
+            "set" => Instructions::Set(parse_to_register(parts[1]), parse_to_value(parts[2])),
+            "add" => Instructions::Add(parse_to_register(parts[1]), parse_to_value(parts[2])),
+            "mul" => Instructions::Mul(parse_to_register(parts[1]), parse_to_value(parts[2])),
+            "mod" => Instructions::Mod(parse_to_register(parts[1]), parse_to_value(parts[2])),
+            "snd" => Instructions::Send(parse_to_value(parts[1])),
+            "rcv" => Instructions::Recover(parse_to_register(parts[1])),
+            "jgz" => Instructions::Jump(parse_to_value(parts[1]), parse_to_value(parts[2])),
+            _ => unimplemented!(),
         };
         ret.push(result);
     }
@@ -313,21 +305,23 @@ pub fn part2(i: &str) -> usize {
 
     // how many times program1 sent a value
     loop {
-        println!("{:?} => {:?}", part0, result0);
-        println!("{:?} => {:?}", part1, result1);
-        if (result0.is_waiting() || result0.is_out_of_range()) && (result1.is_waiting() || result1.is_out_of_range()) {
+        // println!("{:?} => {:?}", part0, result0);
+        // println!("{:?} => {:?}", part1, result1);
+        if (result0.is_waiting() || result0.is_out_of_range())
+            && (result1.is_waiting() || result1.is_out_of_range())
+        {
             return ret;
         }
         match result0 {
             PartnerOutput::Send(v) => part1.receive_value(v),
-            _ => ()
+            _ => (),
         };
         match result1 {
             PartnerOutput::Send(v) => {
                 ret += 1;
                 part0.receive_value(v);
             }
-            _ => ()
+            _ => (),
         }
         result0 = part0.interpret_step();
         result1 = part1.interpret_step();
@@ -343,16 +337,19 @@ fn test_part1() {
 fn test_parsed_part1() {
     use Instructions::*;
     use Value::*;
-    assert_eq!(parsed_part1(&vec![
-        Set('a', Integer(1)),
-        Add('a', Integer(2)),
-        Mul('a', Register('a')),
-        Mod('a', Integer(5)),
-        Send(Register('a')),
-        Set('a', Integer(0)),
-        Recover('a'),
-        Jump(Register('a'), Integer(-1)),
-        Set('a', Integer(1)),
-        Jump(Register('a'), Integer(-2)),
-    ]), Some(4));
+    assert_eq!(
+        parsed_part1(&vec![
+            Set('a', Integer(1)),
+            Add('a', Integer(2)),
+            Mul('a', Register('a')),
+            Mod('a', Integer(5)),
+            Send(Register('a')),
+            Set('a', Integer(0)),
+            Recover('a'),
+            Jump(Register('a'), Integer(-1)),
+            Set('a', Integer(1)),
+            Jump(Register('a'), Integer(-2)),
+        ]),
+        Some(4)
+    );
 }

@@ -71,7 +71,11 @@ fn naive_approach(steps: usize, rounds: usize, interest: usize) -> usize {
         spin.step(steps);
         spin.insert(i);
     }
-    let index = spin.buffer().into_iter().position(|c| c == interest).unwrap();
+    let index = spin
+        .buffer()
+        .into_iter()
+        .position(|c| c == interest)
+        .unwrap();
     spin.buffer()[(index + 1) % rounds]
 }
 

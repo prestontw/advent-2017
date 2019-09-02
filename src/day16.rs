@@ -87,7 +87,7 @@ where
 #[allow(dead_code)]
 fn permute_once<A>(l: &[A], switches: &[usize]) -> Vec<A>
 where
-A: Copy
+    A: Copy,
 {
     let mut ret = l.clone().to_vec();
     for (index, value) in l.iter().enumerate() {

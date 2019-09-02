@@ -13,4 +13,6 @@ fn main() {
     };
     let res1 = day18::part1(&input);
     println!("{:?}", res1);
+    let res2 = day18::part2(&input);
+    println!("{:?}", res2);
 }

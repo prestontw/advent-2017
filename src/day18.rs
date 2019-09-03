@@ -237,7 +237,7 @@ impl Partner {
                     }
                 }
                 Jump(x, y) => {
-                    let offset = if self.value(&x) != 0 {
+                    let offset = if self.value(&x) > 0 {
                         self.value(&y)
                     } else {
                         1

@@ -132,7 +132,7 @@ impl Interpreter {
         }
     }
     fn first_recover(&mut self) -> Option<Number> {
-        while let Ok(_output) = self.interpret_step() {
+        while let Ok(output) = self.interpret_step() {
             if self.recovered_sound.is_some() {
                 break;
             }
@@ -199,9 +199,7 @@ impl Partner {
         if self.program_counter < 0 || self.program_counter > self.instructions.len() as isize {
             PartnerOutput::OutOfRange
         } else {
-            let instr = self.instructions[self.program_counter as usize].clone();
-            print!("{:?} ", instr);
-            match instr {
+            match self.instructions[self.program_counter as usize].clone() {
                 Send(v) => {
                     self.step();
                     PartnerOutput::Send(self.value(&v))
@@ -209,31 +207,26 @@ impl Partner {
                 Set(r, v) => {
                     let v = self.value(&v);
                     self.registers.insert(r, v);
-                    // print!("({} => {}) ", r, v);
                     self.step();
                     PartnerOutput::Continue
                 }
                 Add(r, v) => {
                     self.step();
                     self.operate(r, &v, |a, b| a + b);
-                    // print!("({}: {}) ", r, self.registers[&r]);
                     PartnerOutput::Continue
                 }
                 Mul(r, v) => {
                     self.step();
                     self.operate(r, &v, |a, b| a * b);
-                    // print!("({}: {}) ", r, self.registers[&r]);
                     PartnerOutput::Continue
                 }
                 Mod(r, v) => {
                     self.step();
                     self.operate(r, &v, |a, b| a % b);
-                    // print!("({}: {}) ", r, self.registers[&r]);
                     PartnerOutput::Continue
                 }
                 Recover(r) => {
                     // only step if there is something inside of whatever
-                    // print!("({:?}) ", self.network_q);
                     if self.network_q.len() > 0 {
                         let v = self.network_q.remove(0);
                         self.registers.insert(r, v);
@@ -250,14 +243,13 @@ impl Partner {
                         1
                     };
                     self.program_counter += offset;
-                    // print!("({}) ", self.program_counter);
                     PartnerOutput::Continue
                 }
             }
         }
     }
     fn receive_value(&mut self, v: Number) {
-        // thought supposed to step, not really though! since continuing!
+        self.step();
         self.network_q.push(v);
     }
 }
@@ -305,54 +297,35 @@ pub fn part1(i: &str) -> Option<Number> {
 pub fn part2(i: &str) -> usize {
     let instructions = parse_input(i);
     let mut ret = 0;
-    let mut iteration = 0;
     let mut part0 = Partner::new(instructions.clone(), vec![('p', 0)].into_iter().collect());
     let mut part1 = Partner::new(instructions.clone(), vec![('p', 1)].into_iter().collect());
-    let parts = [&mut part0, &mut part1];
-    let mut parts_index = 0;
 
-    let result0 = parts[0].interpret_step();
-    // print!("{:?}\t", result0);
-    let result1 = parts[1].interpret_step();
-    // println!("{:?}", result1);
-    let mut results = [result0, result1];
+    let mut result0 = part0.interpret_step();
+    let mut result1 = part1.interpret_step();
 
     // how many times program1 sent a value
-    // so as soon as program1 is done, can stop
     loop {
-        match results[parts_index] {
-            PartnerOutput::OutOfRange => {
-                if results[1 - parts_index].is_out_of_range() {
-                    break;
-                } else {
-                    results[parts_index] = PartnerOutput::OutOfRange;
-                    parts_index = 1 - parts_index;
-                }
-            }
-            PartnerOutput::Waiting => {
-                if parts[parts_index].network_q.is_empty() {
-                    if results[1 - parts_index].is_waiting() && parts[1 - parts_index].network_q.is_empty() {
-                        break;
-                    }
-                    else {
-                        results[parts_index] = PartnerOutput::Waiting;
-                        parts_index = 1 - parts_index;
-                    }
-                } else {
-                    results[parts_index] = parts[parts_index].interpret_step();
-                }
-            }
-            PartnerOutput::Send(v) => {
-                parts[1 - parts_index].receive_value(v);
-                if parts_index == 1 {
-                    ret += 1;
-                }
-                results[parts_index] = parts[parts_index].interpret_step();
-            }
-            PartnerOutput::Continue => results[parts_index] = parts[parts_index].interpret_step(),
+        // println!("{:?} => {:?}", part0, result0);
+        // println!("{:?} => {:?}", part1, result1);
+        if (result0.is_waiting() || result0.is_out_of_range())
+            && (result1.is_waiting() || result1.is_out_of_range())
+        {
+            return ret;
         }
+        match result0 {
+            PartnerOutput::Send(v) => part1.receive_value(v),
+            _ => (),
+        };
+        match result1 {
+            PartnerOutput::Send(v) => {
+                ret += 1;
+                part0.receive_value(v);
+            }
+            _ => (),
+        }
+        result0 = part0.interpret_step();
+        result1 = part1.interpret_step();
     }
-    ret
 }
 
 #[test]
@@ -379,20 +352,4 @@ fn test_parsed_part1() {
         ]),
         Some(4)
     );
-}
-
-#[test]
-fn test_part2() {
-    assert_eq!(part2("snd 1
-snd 2
-snd p
-rcv a
-rcv b
-rcv c
-rcv d"), 3);
-}
-
-#[test]
-fn test_similar_example() {
-
 }

@@ -249,7 +249,6 @@ impl Partner {
         }
     }
     fn receive_value(&mut self, v: Number) {
-        self.step();
         self.network_q.push(v);
     }
 }
@@ -352,4 +351,15 @@ fn test_parsed_part1() {
         ]),
         Some(4)
     );
+}
+
+#[test]
+fn test_part2_example() {
+    assert_eq!(part2("snd a
+snd b
+snd p
+rcv a
+rcv b
+rcv c
+rcv d"), 3);
 }

@@ -196,7 +196,7 @@ impl Partner {
     }
     fn interpret_step(&mut self) -> PartnerOutput {
         use Instructions::*;
-        if self.program_counter < 0 || self.program_counter > self.instructions.len() as isize {
+        if self.program_counter < 0 || self.program_counter >= self.instructions.len() as isize {
             PartnerOutput::OutOfRange
         } else {
             match self.instructions[self.program_counter as usize].clone() {
